@@ -63,9 +63,6 @@ final class Logger
      */
     final public function __invoke()
     {
-        echo "<pre>-->";
-        print_r(self::$path);
-        echo "<--@in " . __FILE__ . " on line " . __LINE__ . "\n";
         if ($this->getDefine()->getType() == LogLevel::ERROR) {
             error_log($this->getDefine() . "\n", 3, self::$path . ".error");
         }

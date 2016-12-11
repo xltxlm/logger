@@ -27,7 +27,7 @@ class LogTest extends TestCase
                     ->setType(LogLevel::EMERGENCY)
             )
             ->__invoke();
-        $this->assertFileExists(__DIR__ . '/logger.log');
+        $this->assertFileExists(__DIR__ . '/../logger.log');
     }
 
     /**
@@ -42,7 +42,7 @@ class LogTest extends TestCase
                     ->setType(LogLevel::ERROR)
             )
             ->__invoke();
-        $this->assertFileExists(__DIR__ . '/logger.log');
-        $this->assertFileExists(__DIR__ . '/logger.log.error');
+        $this->assertFileExists(__DIR__ . '/../logger.log');
+        $this->assertFileExists(__DIR__ . '/../logger.log.error');
     }
 }

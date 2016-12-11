@@ -1,0 +1,14 @@
+version: '2'
+services:
+    php:
+      image: php
+      volumes:
+        - ../../:/logger/
+      entrypoint: tail -f /root/.bashrc
+      networks:
+        comm:
+          aliases:
+            - php
+
+networks:
+    comm:

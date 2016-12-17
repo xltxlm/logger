@@ -20,6 +20,7 @@ class LogTest extends TestCase
      */
     public function test1()
     {
+        ini_set('error_log', __DIR__ . "/php_errors.log");
         //写入日志
         (new Logger())
             ->setDefine(
@@ -27,7 +28,7 @@ class LogTest extends TestCase
                     ->setType(LogLevel::EMERGENCY)
             )
             ->__invoke();
-        $this->assertFileExists(__DIR__ . '/../logger.log');
+        $this->assertFileExists(__DIR__ . '/logger.log');
     }
 
     /**
@@ -42,7 +43,7 @@ class LogTest extends TestCase
                     ->setType(LogLevel::ERROR)
             )
             ->__invoke();
-        $this->assertFileExists(__DIR__ . '/../logger.log');
-        $this->assertFileExists(__DIR__ . '/../logger.log.error');
+        $this->assertFileExists(__DIR__ . '/logger.log');
+        $this->assertFileExists(__DIR__ . '/logger.log.error');
     }
 }

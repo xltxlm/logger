@@ -19,6 +19,9 @@ use xltxlm\helper\Hclass\ObjectToKeyVar;
 abstract class DefineLog
 {
     use ObjectToKeyVar;
+    /** @var string  运行的类名称 */
+    private $logClassName = "";
+
     /** @var string 日志的类型 */
     protected $type = LogLevel::INFO;
 
@@ -26,10 +29,13 @@ abstract class DefineLog
     private $hostname = "";
     /** @var string 触发这条sql运行的客户端ip */
     private $clientip = "";
-    /** @var string 来源网址 */
+    /** @var string 当前请求的网址 */
     private $url = "";
-    /** @var float sql运行的时间戳 */
+    /** @var string 来源网址 */
+    private $referer = "";
+    /** @var float 代码段运行的耗时 */
     private $logtime = 0.0;
+    /** @var false|float|string 日志记录的时间点 */
     private $logtimeshow = 0.0;
 
     /**
@@ -37,6 +43,7 @@ abstract class DefineLog
      */
     final public function __construct()
     {
+        $this->logClassName = static::class;
         $this->logtime = microtime(true);
         $this->logtimeshow = date('Y-m-d H:i:s');
         $this->hostname = $_SERVER ['SERVER_NAME'];
@@ -44,6 +51,7 @@ abstract class DefineLog
         $this->url = ($_SERVER['HTTPS'] ? "https" : "http") . "://" .
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']) .
             $_SERVER['REQUEST_URI'];
+        $this->referer = $_SERVER['HTTP_REFERER'];
     }
 
     /**

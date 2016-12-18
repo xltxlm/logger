@@ -10,17 +10,22 @@ namespace xltxlm\logger\tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use xltxlm\logger\Log\BasicLog;
 use xltxlm\logger\Logger;
 use xltxlm\logger\tests\Resource\DemoDefineLog;
 
 class LogTest extends TestCase
 {
+    protected function setUp()
+    {
+        ini_set('error_log', __DIR__ . "/php_errors.log");
+    }
+
     /**
      * 写入普通的日志
      */
     public function test1()
     {
-        ini_set('error_log', __DIR__ . "/php_errors.log");
         //写入日志
         (new Logger())
             ->setDefine(
@@ -46,4 +51,13 @@ class LogTest extends TestCase
         $this->assertFileExists(__DIR__ . '/logger.log');
         $this->assertFileExists(__DIR__ . '/logger.log.error');
     }
+
+    /**
+     * 测试基础的日志类
+     */
+    public function test3()
+    {
+        (new Logger(new BasicLog("测试日志")))();
+    }
+
 }

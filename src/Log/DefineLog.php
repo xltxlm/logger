@@ -52,6 +52,9 @@ abstract class DefineLog
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']) .
             $_SERVER['REQUEST_URI'];
         $this->referer = $_SERVER['HTTP_REFERER'];
+        if (method_exists($this, '__selfConstruct')) {
+            call_user_func_array([$this, '__selfConstruct'], func_get_args());
+        }
     }
 
     /**

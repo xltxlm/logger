@@ -44,16 +44,21 @@ final class Logger
 
     /**
      * @desc   设置默认的文件日志存储位置
+     * @param null|DefineLog $define
      */
-    public function __construct()
+    public function __construct($define = null)
     {
         if (empty(self::$path)) {
             $dirname = dirname(ini_get('error_log'));
+            //如果没有设置 error_log 写到项目的目录上
             self::$path =
                 ($dirname ? $dirname . "/" : '') .
                 basename(dirname(dirname(dirname((new \ReflectionClass(ClassLoader::class))
                     ->getFileName())))) .
                 ".log";
+        }
+        if ($define) {
+            $this->setDefine($define);
         }
     }
 
@@ -61,8 +66,9 @@ final class Logger
     /**
      * 写入文件系统,如果是错误信息,会在写入另外一个 error结尾的文件
      */
-    final public function __invoke()
+    public function __invoke()
     {
+        //如果是错误日志,多开一个记录文件
         if ($this->getDefine()->getType() == LogLevel::ERROR) {
             error_log($this->getDefine() . "\n", 3, self::$path . ".error");
         }

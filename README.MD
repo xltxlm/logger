@@ -4,7 +4,15 @@
 日志的类型定义参考字典类
 \Psr\Log\LogLevel
 
+#使用
 记录的内容是一种结构化的数据,步骤是:
 + 需要先定义日志类  extends DefineLog
 + new 日志类  set 各个参数
 + 用(new Logger()) 写入 日志类
+
+##辅助功能
+QPS报警
+
+
+#案例
+查看 tests 目录下的例子

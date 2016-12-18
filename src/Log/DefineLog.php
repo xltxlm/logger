@@ -12,7 +12,7 @@ use Psr\Log\LogLevel;
 use xltxlm\helper\Hclass\ObjectToKeyVar;
 
 /**
- * 日志的基础结构
+ * 日志的基础结构，子类提供__selfConstruct构造函数
  * Class DefineLog
  * @package xltxlm\logger\Log
  */
@@ -56,6 +56,63 @@ abstract class DefineLog
             call_user_func_array([$this, '__selfConstruct'], func_get_args());
         }
     }
+
+    /**
+     * @param string $logClassName
+     */
+    final public function setLogClassName(string $logClassName)
+    {
+        $this->logClassName = $logClassName;
+    }
+
+    /**
+     * @param string $hostname
+     */
+    final public function setHostname(string $hostname)
+    {
+        $this->hostname = $hostname;
+    }
+
+    /**
+     * @param string $clientip
+     */
+    final public function setClientip(string $clientip)
+    {
+        $this->clientip = $clientip;
+    }
+
+    /**
+     * @param string $url
+     */
+    final public function setUrl(string $url)
+    {
+        $this->url = $url;
+    }
+
+    /**
+     * @param string $referer
+     */
+    final public function setReferer(string $referer)
+    {
+        $this->referer = $referer;
+    }
+
+    /**
+     * @param float $logtime
+     */
+    final public function setLogtime(float $logtime)
+    {
+        $this->logtime = $logtime;
+    }
+
+    /**
+     * @param false|float|string $logtimeshow
+     */
+    final public function setLogtimeshow($logtimeshow)
+    {
+        $this->logtimeshow = $logtimeshow;
+    }
+
 
     /**
      * @return string

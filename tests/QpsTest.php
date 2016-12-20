@@ -8,7 +8,6 @@
 
 namespace xltxlm\logger\tests;
 
-
 use PHPUnit\Framework\TestCase;
 use xltxlm\logger\Qps;
 
@@ -18,7 +17,6 @@ use xltxlm\logger\Qps;
  */
 class QpsTest extends TestCase
 {
-
     public function test1()
     {
         $qps = (new Qps(__DIR__ . '/logger.log'))

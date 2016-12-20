@@ -59,5 +59,4 @@ class LogTest extends TestCase
     {
         (new Logger(new BasicLog("测试日志")))();
     }
-
 }

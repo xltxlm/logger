@@ -72,6 +72,10 @@ final class Logger
         if ($this->getDefine()->getType() == LogLevel::ERROR) {
             error_log($this->getDefine() . "\n", 3, self::$path . ".error");
         }
+
+        if ($this->getDefine()->getType() == LogLevel::EMERGENCY) {
+            error_log($this->getDefine() . "\n", 3, self::$path . ".emergency");
+        }
         error_log($this->getDefine() . "\n", 3, self::$path);
     }
 }

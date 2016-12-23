@@ -21,8 +21,29 @@ final class Logger
 {
     /** @var string 日志存储的路径 */
     private static $path = "";
+    /** @var string 文件的后缀 */
+    private $suffix = "";
     /** @var  DefineLog 日志格式 */
     protected $define;
+
+    /**
+     * @return string
+     */
+    public function getSuffix()
+    {
+        return $this->suffix;
+    }
+
+    /**
+     * @param string $suffix
+     * @return Logger
+     */
+    public function setSuffix($suffix)
+    {
+        $this->suffix = $suffix;
+        return $this;
+    }
+
 
     /**
      * @return DefineLog
@@ -52,9 +73,9 @@ final class Logger
             $dirname = dirname(ini_get('error_log'));
             //如果没有设置 error_log 写到项目的目录上
             self::$path =
-                ($dirname ? $dirname . "/" : '') .
+                ($dirname ? $dirname."/" : '').
                 basename(dirname(dirname(dirname((new \ReflectionClass(ClassLoader::class))
-                    ->getFileName())))) .
+                    ->getFileName())))).
                 ".log";
         }
         if ($define) {
@@ -70,12 +91,12 @@ final class Logger
     {
         //如果是错误日志,多开一个记录文件
         if ($this->getDefine()->getType() == LogLevel::ERROR) {
-            error_log($this->getDefine() . "\n", 3, self::$path . ".error");
+            error_log($this->getDefine()."\n", 3, self::$path.".error");
         }
 
         if ($this->getDefine()->getType() == LogLevel::EMERGENCY) {
-            error_log($this->getDefine() . "\n", 3, self::$path . ".emergency");
+            error_log($this->getDefine()."\n", 3, self::$path.".emergency");
         }
-        error_log($this->getDefine() . "\n", 3, self::$path);
+        error_log($this->getDefine()."\n", 3, self::$path.$this->getSuffix());
     }
 }

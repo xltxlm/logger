@@ -9,7 +9,7 @@
 namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
-use xltxlm\helper\Hclass\ObjectToKeyVar;
+use xltxlm\helper\Hclass\ObjectToJson;
 
 /**
  * 日志的基础结构，子类提供__selfConstruct构造函数
@@ -18,7 +18,7 @@ use xltxlm\helper\Hclass\ObjectToKeyVar;
  */
 abstract class DefineLog
 {
-    use ObjectToKeyVar;
+    use ObjectToJson;
     /** @var string  运行的类名称 */
     private $logClassName = "";
 
@@ -33,8 +33,8 @@ abstract class DefineLog
     private $url = "";
     /** @var string 来源网址 */
     private $referer = "";
-    /** @var float 代码段运行的耗时 */
-    private $logtime = 0.0;
+    /** @var string 进程唯一id */
+    private $uniqid = "";
     /** @var false|float|string 日志记录的时间点 */
     private $logtimeshow = 0.0;
 
@@ -43,13 +43,17 @@ abstract class DefineLog
      */
     final public function __construct()
     {
+        static $uniqid = "";
+        if (!$uniqid) {
+            $uniqid = uniqid();
+        }
         $this->logClassName = static::class;
-        $this->logtime = microtime(true);
+        $this->uniqid = $uniqid;
         $this->logtimeshow = date('Y-m-d H:i:s');
         $this->hostname = $_SERVER ['SERVER_NAME'];
         $this->clientip = $_SERVER['REMOTE_ADDR'];
-        $this->url = ($_SERVER['HTTPS'] ? "https" : "http") . "://" .
-            ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']) .
+        $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".
+            ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
             $_SERVER['REQUEST_URI'];
         $this->referer = $_SERVER['HTTP_REFERER'];
         if (method_exists($this, '__selfConstruct')) {

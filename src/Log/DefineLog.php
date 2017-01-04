@@ -151,7 +151,7 @@ abstract class DefineLog
 
     /**
      * @param string $type
-     * @return DefineLog
+     * @return $this
      */
     final public function setType($type)
     {

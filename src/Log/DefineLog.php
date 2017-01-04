@@ -38,6 +38,29 @@ abstract class DefineLog
     /** @var false|float|string 日志记录的时间点 */
     private $logtimeshow = 0.0;
 
+    /** @var string 代码执行的堆栈路径 */
+    protected $trace = '';
+
+    /**
+     * @return string
+     */
+    public function getTrace(): string
+    {
+        return $this->trace;
+    }
+
+    /**
+     * @param string $trace
+     *
+     * @return DefineLog
+     */
+    public function setTrace(string $trace): DefineLog
+    {
+        $this->trace = $trace;
+
+        return $this;
+    }
+
     /**
      * DefineLog constructor.
      */

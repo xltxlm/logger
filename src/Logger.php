@@ -91,6 +91,10 @@ final class Logger
     {
         //如果是错误日志,多开一个记录文件
         if ($this->getDefine()->getType() == LogLevel::ERROR) {
+            ob_start();
+            debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            $trace = ob_get_clean();
+            $this->getDefine()->setTrace($trace);
             error_log($this->getDefine()."\n", 3, self::$path.".error");
         }
 

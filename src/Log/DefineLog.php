@@ -21,6 +21,8 @@ abstract class DefineLog
     use ObjectToJson;
     /** @var string  运行的类名称 */
     private $logClassName = "";
+    /** @var string 本次日志前后运行的时间差 */
+    private $runTime = 0;
 
     /** @var string 日志的类型 */
     protected $type = LogLevel::INFO;
@@ -40,6 +42,25 @@ abstract class DefineLog
 
     /** @var string 代码执行的堆栈路径 */
     protected $trace = '';
+
+    /**
+     * @return string
+     */
+    public function getRunTime(): string
+    {
+        return $this->runTime;
+    }
+
+    /**
+     * @param string $runTime
+     * @return DefineLog
+     */
+    public function setRunTime(string $runTime): DefineLog
+    {
+        $this->runTime = $runTime;
+        return $this;
+    }
+
 
     /**
      * @return string

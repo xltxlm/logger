@@ -53,9 +53,9 @@ abstract class DefineLog
 
     /**
      * @param string $runTime
-     * @return DefineLog
+     * @return static
      */
-    public function setRunTime(string $runTime): DefineLog
+    public function setRunTime(string $runTime)
     {
         $this->runTime = $runTime;
         return $this;

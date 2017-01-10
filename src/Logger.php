@@ -26,7 +26,7 @@ final class Logger
     /** @var  DefineLog 日志格式 */
     protected $define;
     /** @var int 运行时间超过3秒的,记录为需要优化的类型 */
-    protected $outtime = 3;
+    protected $outtime = 6;
 
     /**
      * @return int

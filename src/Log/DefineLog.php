@@ -10,6 +10,7 @@ namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
 use xltxlm\helper\Hclass\ObjectToJson;
+use xltxlm\logger\Logger;
 
 /**
  * 日志的基础结构，子类提供__selfConstruct构造函数
@@ -146,14 +147,6 @@ abstract class DefineLog
     }
 
     /**
-     * @param float $logtime
-     */
-    final public function setLogtime(float $logtime)
-    {
-        $this->logtime = $logtime;
-    }
-
-    /**
      * @param false|float|string $logtimeshow
      */
     final public function setLogtimeshow($logtimeshow)
@@ -178,5 +171,15 @@ abstract class DefineLog
     {
         $this->type = $type;
         return $this;
+    }
+
+    /**
+     * 记录日志
+     */
+    final public function __invoke()
+    {
+        (new Logger())
+            ->setDefine($this)
+            ->__invoke();
     }
 }

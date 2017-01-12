@@ -26,23 +26,23 @@ final class Logger
     /** @var  DefineLog 日志格式 */
     protected $define;
     /** @var int 运行时间超过3秒的,记录为需要优化的类型 */
-    protected $outtime = 6;
+    protected $timeout = 6;
 
     /**
      * @return int
      */
-    public function getOuttime(): int
+    public function getTimeout(): int
     {
-        return $this->outtime;
+        return $this->timeout;
     }
 
     /**
-     * @param int $outtime
+     * @param int $timeout
      * @return Logger
      */
-    public function setOuttime(int $outtime): Logger
+    public function setTimeout(int $timeout): Logger
     {
-        $this->outtime = $outtime;
+        $this->timeout = $timeout;
         return $this;
     }
 
@@ -119,7 +119,7 @@ final class Logger
             error_log($this->getDefine()."\n", 3, self::$path.".error");
         }
         //检测紧急的,都是运行时间超时的,并且不是在命令行下运行的
-        if ($this->getDefine()->getRunTime() > $this->getOuttime() && php_sapi_name() != 'cli') {
+        if ($this->getDefine()->getRunTime() > $this->getTimeout() && php_sapi_name() != 'cli') {
             error_log($this->getDefine()."\n", 3, self::$path.".emergency");
         }
         error_log($this->getDefine()."\n", 3, self::$path.$this->getSuffix());

@@ -74,7 +74,7 @@ abstract class DefineLog
     /**
      * @param string $trace
      *
-     * @return DefineLog
+     * @return static
      */
     public function setTrace(string $trace): DefineLog
     {

@@ -9,6 +9,7 @@
 namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
+use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\helper\Hclass\ObjectToJson;
 use xltxlm\logger\Logger;
 
@@ -20,6 +21,10 @@ use xltxlm\logger\Logger;
 abstract class DefineLog
 {
     use ObjectToJson;
+
+    /** @var  array  业务的相关记录 */
+    protected static $businessObject = [];
+
     /** @var string  运行的类名称 */
     private $logClassName = "";
     /** @var string 资源名称 */
@@ -47,12 +52,56 @@ abstract class DefineLog
     protected $trace = '';
 
     /**
+     * DefineLog constructor.
+     */
+    public function __construct()
+    {
+        static $uniqid = "";
+        if (!$uniqid) {
+            $uniqid = uniqid();
+        }
+        $this->logClassName = static::class;
+        $this->uniqid = $uniqid;
+        $this->logtimeshow = date('Y-m-d H:i:s');
+        $this->hostname = $_SERVER ['SERVER_NAME'];
+        $this->clientip = $_SERVER['REMOTE_ADDR'];
+        $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".
+            ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
+            $_SERVER['REQUEST_URI'];
+        $this->referer = $_SERVER['HTTP_REFERER'];
+
+        //追加全局参数记录
+        foreach (self::$businessObject as $key => $item) {
+            $this->$key = $item;
+        }
+    }
+
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    public static function setBusinessObject(string $key, string $value)
+    {
+        self::$businessObject[$key] = $value;
+    }
+
+    /**
+     * @param string $key
+     */
+    public static function unsetBusinessObject(string $key)
+    {
+        unset(self::$businessObject[$key]);
+    }
+
+    /**
      * @return string
      */
     public function getReource(): string
     {
         return $this->reource;
     }
+
 
     /**
      * @param string $reource
@@ -64,7 +113,6 @@ abstract class DefineLog
         return $this;
     }
 
-
     /**
      * @return string
      */
@@ -72,6 +120,7 @@ abstract class DefineLog
     {
         return $this->runTime;
     }
+
 
     /**
      * @param string $runTime
@@ -82,7 +131,6 @@ abstract class DefineLog
         $this->runTime = $runTime;
         return $this;
     }
-
 
     /**
      * @return string
@@ -102,29 +150,6 @@ abstract class DefineLog
         $this->trace = $trace;
 
         return $this;
-    }
-
-    /**
-     * DefineLog constructor.
-     */
-    public function __construct()
-    {
-        static $uniqid = "";
-        if (!$uniqid) {
-            $uniqid = uniqid();
-        }
-        $this->logClassName = static::class;
-        $this->uniqid = $uniqid;
-        $this->logtimeshow = date('Y-m-d H:i:s');
-        $this->hostname = $_SERVER ['SERVER_NAME'];
-        $this->clientip = $_SERVER['REMOTE_ADDR'];
-        $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".
-            ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
-            $_SERVER['REQUEST_URI'];
-        $this->referer = $_SERVER['HTTP_REFERER'];
-        if (method_exists($this, '__selfConstruct')) {
-            call_user_func_array([$this, '__selfConstruct'], func_get_args());
-        }
     }
 
     /**

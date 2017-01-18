@@ -22,6 +22,8 @@ abstract class DefineLog
     use ObjectToJson;
     /** @var string  运行的类名称 */
     private $logClassName = "";
+    /** @var string 资源名称 */
+    private $reource = "";
     /** @var string 本次日志前后运行的时间差 */
     private $runTime = 0;
 
@@ -43,6 +45,25 @@ abstract class DefineLog
 
     /** @var string 代码执行的堆栈路径 */
     protected $trace = '';
+
+    /**
+     * @return string
+     */
+    public function getReource(): string
+    {
+        return $this->reource;
+    }
+
+    /**
+     * @param string $reource
+     * @return DefineLog
+     */
+    public function setReource(string $reource): DefineLog
+    {
+        $this->reource = $reource;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -86,7 +107,7 @@ abstract class DefineLog
     /**
      * DefineLog constructor.
      */
-    final public function __construct()
+    public function __construct()
     {
         static $uniqid = "";
         if (!$uniqid) {

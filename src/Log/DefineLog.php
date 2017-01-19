@@ -48,7 +48,9 @@ abstract class DefineLog
     /** @var string 日志的唯一id */
     private $logid = "";
     /** @var false|float|string 日志记录的时间点 */
-    private $logtimeshow = 0.0;
+    private $logtimeshow = "";
+    /** @var false|float|string 日志记录的时间点 */
+    private $timestamp = "";
 
     /** @var string 代码执行的堆栈路径 */
     protected $trace = '';
@@ -66,6 +68,7 @@ abstract class DefineLog
         $this->uniqid = $uniqid;
         $this->logid = dk_get_dt_id();
         $this->logtimeshow = date('Y-m-d H:i:s');
+        $this->timestamp = date('c');
         $this->hostname = $_SERVER ['SERVER_NAME'];
         $this->clientip = $_SERVER['REMOTE_ADDR'];
         $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".

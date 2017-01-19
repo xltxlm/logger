@@ -26,7 +26,7 @@ abstract class DefineLog
     protected static $businessObject = [];
 
     /** @var string  运行的类名称 */
-    private $logClassName = "";
+    protected $logClassName = "";
     /** @var string 资源名称 */
     private $reource = "";
     /** @var string 本次日志前后运行的时间差 */
@@ -45,6 +45,8 @@ abstract class DefineLog
     private $referer = "";
     /** @var string 进程唯一id */
     private $uniqid = "";
+    /** @var string 日志的唯一id */
+    private $logid = "";
     /** @var false|float|string 日志记录的时间点 */
     private $logtimeshow = 0.0;
 
@@ -62,6 +64,7 @@ abstract class DefineLog
         }
         $this->logClassName = static::class;
         $this->uniqid = $uniqid;
+        $this->logid = dk_get_dt_id();
         $this->logtimeshow = date('Y-m-d H:i:s');
         $this->hostname = $_SERVER ['SERVER_NAME'];
         $this->clientip = $_SERVER['REMOTE_ADDR'];
@@ -74,6 +77,24 @@ abstract class DefineLog
         foreach (self::$businessObject as $key => $item) {
             $this->$key = $item;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogid(): string
+    {
+        return $this->logid;
+    }
+
+    /**
+     * @param string $logid
+     * @return DefineLog
+     */
+    public function setLogid(string $logid): DefineLog
+    {
+        $this->logid = $logid;
+        return $this;
     }
 
 

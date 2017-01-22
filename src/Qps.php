@@ -9,6 +9,8 @@
 namespace xltxlm\logger;
 
 use Tac\Tac;
+use xltxlm\helper\Hclass\MergeObject;
+use xltxlm\logger\Log\BasicLog;
 
 /**
  * 将记录的日志取出来最新的2000条,计算QPS
@@ -61,6 +63,9 @@ final class Qps
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function __invoke()
     {
         $tacs = (new Tac($this->file))
@@ -68,12 +73,14 @@ final class Qps
         $qps = [];
         $endTime = date('Y-m-d H:i:s', strtotime("- 30 minute"));
         foreach ($tacs as $tac) {
-            preg_match("/ logClassName=([^ ]+) .* logtimeshow=([^=]+)/", $tac, $items);
-            $logCLassName = $items[1];
-            $logTimeShow = $items[2];
-            if ($logCLassName && $logTimeShow && $logTimeShow > $endTime) {
+            $tac = json_decode($tac, true);
+            /** @var BasicLog $BasicLog */
+            $BasicLog = (new MergeObject((new BasicLog())))
+                ->setArray($tac)
+                ->__invoke();
+            if ($BasicLog->getLogClassName() && $BasicLog->getLogtimeshow() && $BasicLog->getLogtimeshow() > $endTime) {
                 //如果时间已经超过当前 半小时前,不操作
-                $qps[$logCLassName][$logTimeShow]++;
+                $qps[$BasicLog->getLogClassName()][$BasicLog->getLogtimeshow()]++;
             }
         }
         foreach ($qps as &$qp) {

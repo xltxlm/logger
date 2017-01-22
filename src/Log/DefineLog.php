@@ -82,6 +82,7 @@ abstract class DefineLog
         }
     }
 
+
     /**
      * @return string
      */
@@ -174,6 +175,70 @@ abstract class DefineLog
         $this->trace = $trace;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogClassName(): string
+    {
+        return $this->logClassName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHostname(): string
+    {
+        return $this->hostname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientip(): string
+    {
+        return $this->clientip;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReferer(): string
+    {
+        return $this->referer;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqid(): string
+    {
+        return $this->uniqid;
+    }
+
+    /**
+     * @return false|float|string
+     */
+    public function getLogtimeshow()
+    {
+        return $this->logtimeshow;
+    }
+
+    /**
+     * @return false|float|string
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
     }
 
     /**

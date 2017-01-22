@@ -22,6 +22,9 @@ class QpsTest extends TestCase
         $qps = (new Qps(__DIR__ . '/logger.log'))
             ->setLines(20)
             ->__invoke();
+        echo "<pre>-->";
+        print_r($qps);
+        echo "<--@in " . __FILE__ . " on line " . __LINE__ . "\n";
         $this->assertNotEmpty($qps);
     }
 }

@@ -1,7 +1,7 @@
 version: '2'
 services:
     php:
-      image: php
+      image: phplog
       volumes:
         - ../../:/logger/
       entrypoint: tail -f /root/.bashrc

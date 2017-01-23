@@ -18,8 +18,9 @@ class BasicLog extends DefineLog
 {
     protected $message = '';
 
-    protected function __selfConstruct($message = '')
+    public function __construct($message = '')
     {
+        parent::__construct();
         if ($message) {
             $this->setMessage($message);
         }

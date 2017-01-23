@@ -93,7 +93,7 @@ abstract class DefineLog
 
     /**
      * @param string $logid
-     * @return DefineLog
+     * @return static
      */
     public function setLogid(string $logid): DefineLog
     {
@@ -130,7 +130,7 @@ abstract class DefineLog
 
     /**
      * @param string $reource
-     * @return DefineLog
+     * @return static
      */
     public function setReource(string $reource): DefineLog
     {
@@ -243,51 +243,84 @@ abstract class DefineLog
 
     /**
      * @param string $logClassName
+     * @return static
      */
-    final public function setLogClassName(string $logClassName)
+    public function setLogClassName(string $logClassName)
     {
         $this->logClassName = $logClassName;
+        return $this;
     }
 
     /**
      * @param string $hostname
+     * @return static
      */
-    final public function setHostname(string $hostname)
+    public function setHostname(string $hostname)
     {
         $this->hostname = $hostname;
+        return $this;
     }
 
     /**
      * @param string $clientip
+     * @return static
      */
-    final public function setClientip(string $clientip)
+    public function setClientip(string $clientip)
     {
         $this->clientip = $clientip;
+        return $this;
     }
 
     /**
      * @param string $url
+     * @return static
      */
-    final public function setUrl(string $url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
+        return $this;
     }
 
     /**
      * @param string $referer
+     * @return static
      */
-    final public function setReferer(string $referer)
+    public function setReferer(string $referer)
     {
         $this->referer = $referer;
+        return $this;
+    }
+
+    /**
+     * @param string $uniqid
+     * @return static
+     */
+    public function setUniqid(string $uniqid)
+    {
+        $this->uniqid = $uniqid;
+        return $this;
     }
 
     /**
      * @param false|float|string $logtimeshow
+     * @return static
      */
-    final public function setLogtimeshow($logtimeshow)
+    public function setLogtimeshow($logtimeshow)
     {
         $this->logtimeshow = $logtimeshow;
+        return $this;
     }
+
+    /**
+     * @param false|float|string $timestamp
+     * @return static
+     */
+    public function setTimestamp($timestamp)
+    {
+        $this->timestamp = $timestamp;
+        return $this;
+    }
+
 
 
     /**

@@ -60,13 +60,14 @@ abstract class DefineLog
      */
     public function __construct()
     {
+        include_once __DIR__.'/dk_get_dt_id.php';
         static $uniqid = "";
         if (!$uniqid) {
             $uniqid = uniqid();
         }
         $this->logClassName = static::class;
         $this->uniqid = $uniqid;
-        $this->logid = dk_get_dt_id();
+        $this->logid = \dk_get_dt_id();
         $this->logtimeshow = date('Y-m-d H:i:s');
         $this->timestamp = date('c');
         $this->hostname = $_SERVER ['SERVER_NAME'];
@@ -320,7 +321,6 @@ abstract class DefineLog
         $this->timestamp = $timestamp;
         return $this;
     }
-
 
 
     /**

@@ -78,9 +78,9 @@ final class Qps
             $BasicLog = (new MergeObject((new BasicLog())))
                 ->setArray($tac)
                 ->__invoke();
-            if ($BasicLog->getLogClassName() && $BasicLog->getLogtimeshow() && $BasicLog->getLogtimeshow() > $endTime) {
+            if ($BasicLog->getCallClass() && $BasicLog->getLogtimeshow() && $BasicLog->getLogtimeshow() > $endTime) {
                 //如果时间已经超过当前 半小时前,不操作
-                $qps[$BasicLog->getLogClassName()][$BasicLog->getLogtimeshow()]++;
+                $qps[$BasicLog->getCallClass()][$BasicLog->getLogtimeshow()]++;
             }
         }
         foreach ($qps as &$qp) {

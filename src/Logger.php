@@ -24,7 +24,7 @@ final class Logger
     /** @var string 文件的后缀 */
     private $suffix = "";
     /** @var  DefineLog 日志格式 */
-    protected $define;
+    protected $logDefine;
     /** @var int 运行时间超过3秒的,记录为需要优化的类型 */
     protected $timeout = 6;
 
@@ -69,18 +69,18 @@ final class Logger
     /**
      * @return DefineLog
      */
-    public function getDefine()
+    public function getLogDefine()
     {
-        return $this->define;
+        return $this->logDefine;
     }
 
     /**
-     * @param DefineLog $define
+     * @param DefineLog $logDefine
      * @return Logger
      */
-    public function setDefine(DefineLog $define)
+    public function setLogDefine(DefineLog $logDefine)
     {
-        $this->define = $define;
+        $this->logDefine = $logDefine;
         return $this;
     }
 
@@ -100,7 +100,7 @@ final class Logger
                 ".log";
         }
         if ($define) {
-            $this->setDefine($define);
+            $this->setLogDefine($define);
         }
     }
 
@@ -110,18 +110,18 @@ final class Logger
      */
     public function __invoke()
     {
+        ob_start();
+        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $trace = ob_get_clean();
+        $this->getLogDefine()->setTrace($trace);
         //如果是错误日志,多开一个记录文件
-        if ($this->getDefine()->getType() == LogLevel::ERROR) {
-            ob_start();
-            debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-            $trace = ob_get_clean();
-            $this->getDefine()->setTrace($trace);
-            error_log($this->getDefine()."\n", 3, self::$path.".error");
+        if ($this->getLogDefine()->getType() == LogLevel::ERROR) {
+            error_log($this->getLogDefine()."\n", 3, self::$path.".error");
         }
         //检测紧急的,都是运行时间超时的,并且不是在命令行下运行的
-        if ($this->getDefine()->getRunTime() > $this->getTimeout() && php_sapi_name() != 'cli') {
-            error_log($this->getDefine()."\n", 3, self::$path.".emergency");
+        if ($this->getLogDefine()->getRunTime() > $this->getTimeout() && php_sapi_name() != 'cli') {
+            error_log($this->getLogDefine()."\n", 3, self::$path.".emergency");
         }
-        error_log($this->getDefine()."\n", 3, self::$path.$this->getSuffix());
+        error_log($this->getLogDefine()."\n", 3, self::$path.$this->getSuffix());
     }
 }

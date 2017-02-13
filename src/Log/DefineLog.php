@@ -9,7 +9,7 @@
 namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
-use xltxlm\helper\Hclass\ConvertObject;
+use xltxlm\helper\Ctroller\LoadClass;
 use xltxlm\helper\Hclass\ObjectToJson;
 use xltxlm\logger\Logger;
 
@@ -27,6 +27,12 @@ abstract class DefineLog
 
     /** @var string  运行的类名称 */
     protected $logClassName = "";
+    /** @var string 运行的类名称 */
+    protected $callClass = "";
+    /** @var array  运行的类名称 */
+    protected $runClass = [];
+    /** @var array  运行的函数名称 */
+    protected $runFunction = [];
     /** @var string 资源名称 */
     private $reource = "";
     /** @var string 本次日志前后运行的时间差 */
@@ -66,6 +72,20 @@ abstract class DefineLog
             $uniqid = uniqid();
         }
         $this->logClassName = static::class;
+        $this->callClass = LoadClass::$runClass;
+        $debug_backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        foreach ($debug_backtrace as $item) {
+            if ($item['class']) {
+                $this->runClass[] = $item['class'];
+            }
+            if ($item['function']) {
+                $this->runFunction[] = $item['class'].'::'.$item['function'];
+            }
+        }
+        $this->runClass = array_reverse($this->runClass);
+        $this->callClass = $this->callClass ?: current($this->runClass);
+        $this->runFunction = array_reverse($this->runFunction);
+
         $this->uniqid = $uniqid;
         $this->logid = \dk_get_dt_id();
         $this->logtimeshow = date('Y-m-d H:i:s');
@@ -83,6 +103,14 @@ abstract class DefineLog
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getCallClass(): string
+    {
+        return $this->callClass;
+    }
+
 
     /**
      * @return string
@@ -96,7 +124,7 @@ abstract class DefineLog
      * @param string $logid
      * @return static
      */
-    public function setLogid(string $logid): DefineLog
+    public function setLogid(string $logid)
     {
         $this->logid = $logid;
         return $this;
@@ -133,7 +161,7 @@ abstract class DefineLog
      * @param string $reource
      * @return static
      */
-    public function setReource(string $reource): DefineLog
+    public function setReource(string $reource)
     {
         $this->reource = $reource;
         return $this;
@@ -171,19 +199,11 @@ abstract class DefineLog
      *
      * @return static
      */
-    public function setTrace(string $trace): DefineLog
+    public function setTrace(string $trace)
     {
         $this->trace = $trace;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLogClassName(): string
-    {
-        return $this->logClassName;
     }
 
     /**
@@ -240,16 +260,6 @@ abstract class DefineLog
     public function getTimestamp()
     {
         return $this->timestamp;
-    }
-
-    /**
-     * @param string $logClassName
-     * @return static
-     */
-    public function setLogClassName(string $logClassName)
-    {
-        $this->logClassName = $logClassName;
-        return $this;
     }
 
     /**
@@ -347,7 +357,7 @@ abstract class DefineLog
     final public function __invoke()
     {
         (new Logger())
-            ->setDefine($this)
+            ->setLogDefine($this)
             ->__invoke();
     }
 }

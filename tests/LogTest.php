@@ -28,7 +28,7 @@ class LogTest extends TestCase
     {
         //写入日志
         (new Logger())
-            ->setDefine(
+            ->setLogDefine(
                 (new DemoDefineLog())
                     ->setType(LogLevel::EMERGENCY)
             )
@@ -43,7 +43,7 @@ class LogTest extends TestCase
     {
         //写入日志
         (new Logger())
-            ->setDefine(
+            ->setLogDefine(
                 (new DemoDefineLog())
                     ->setType(LogLevel::ERROR)
             )

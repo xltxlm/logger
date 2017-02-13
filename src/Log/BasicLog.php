@@ -45,13 +45,6 @@ class BasicLog extends DefineLog
             $message = (new ConvertObject($message))
                 ->toJson();
         }
-        $debug_backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        foreach ($debug_backtrace as $item) {
-            if ($debug_backtrace[1]['class'] <> BasicLog::class) {
-                $this->setLogClassName($debug_backtrace[1]['class']);
-                break;
-            }
-        }
         $this->message = $message;
 
         return $this;

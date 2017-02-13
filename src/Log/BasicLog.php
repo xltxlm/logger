@@ -16,9 +16,10 @@ use xltxlm\helper\Hclass\ConvertObject;
  */
 class BasicLog extends DefineLog
 {
-    protected $message = '';
+    /** @var  mixed 要记录的类 */
+    protected $message;
 
-    public function __construct($message = '')
+    public function __construct($message)
     {
         parent::__construct();
         if ($message) {
@@ -43,7 +44,7 @@ class BasicLog extends DefineLog
     {
         if (is_object($message)) {
             $message = (new ConvertObject($message))
-                ->toJson();
+                ->toArray();
         }
         $this->message = $message;
 

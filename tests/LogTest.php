@@ -16,9 +16,12 @@ use xltxlm\logger\tests\Resource\DemoDefineLog;
 
 class LogTest extends TestCase
 {
+    protected $id = __LINE__;
+    protected $name = __FILE__;
+
     protected function setUp()
     {
-        ini_set('error_log', __DIR__ . "/php_errors.log");
+        ini_set('error_log', __DIR__."/php_errors.log");
     }
 
     /**
@@ -33,7 +36,7 @@ class LogTest extends TestCase
                     ->setType(LogLevel::EMERGENCY)
             )
             ->__invoke();
-        $this->assertFileExists(__DIR__ . '/logger.log');
+        $this->assertFileExists(__DIR__.'/logger.log');
     }
 
     /**
@@ -48,8 +51,8 @@ class LogTest extends TestCase
                     ->setType(LogLevel::ERROR)
             )
             ->__invoke();
-        $this->assertFileExists(__DIR__ . '/logger.log');
-        $this->assertFileExists(__DIR__ . '/logger.log.error');
+        $this->assertFileExists(__DIR__.'/logger.log');
+        $this->assertFileExists(__DIR__.'/logger.log.error');
     }
 
     /**
@@ -58,5 +61,13 @@ class LogTest extends TestCase
     public function test3()
     {
         (new Logger(new BasicLog("测试日志")))();
+    }
+
+    /**
+     * 测试基础的日志类:记录整个类
+     */
+    public function test4()
+    {
+        (new Logger(new BasicLog($this)))();
     }
 }

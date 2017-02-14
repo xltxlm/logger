@@ -19,7 +19,7 @@ class BasicLog extends DefineLog
     /** @var  mixed 要记录的类 */
     protected $message;
 
-    public function __construct($message)
+    public function __construct($message = null)
     {
         parent::__construct();
         if ($message) {

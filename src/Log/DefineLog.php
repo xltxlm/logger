@@ -90,12 +90,12 @@ abstract class DefineLog
         $this->logid = \dk_get_dt_id();
         $this->logtimeshow = date('Y-m-d H:i:s');
         $this->timestamp = date('c');
-        $this->hostname = $_SERVER ['SERVER_NAME'];
-        $this->clientip = $_SERVER['REMOTE_ADDR'];
+        $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
+        $this->clientip = $_SERVER['REMOTE_ADDR'] ?: '';
         $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
             $_SERVER['REQUEST_URI'];
-        $this->referer = $_SERVER['HTTP_REFERER'];
+        $this->referer = $_SERVER['HTTP_REFERER'] ?: '';
 
         //追加全局参数记录
         foreach (self::$businessObject as $key => $item) {

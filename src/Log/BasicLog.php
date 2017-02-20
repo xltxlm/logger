@@ -18,6 +18,8 @@ class BasicLog extends DefineLog
 {
     /** @var  mixed 要记录的类 */
     protected $message;
+    /** @var  string */
+    protected $messageDescribe = "";
 
     public function __construct($message = null)
     {
@@ -26,6 +28,25 @@ class BasicLog extends DefineLog
             $this->setMessage($message);
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getMessageDescribe(): string
+    {
+        return $this->messageDescribe;
+    }
+
+    /**
+     * @param string $messageDescribe
+     * @return BasicLog
+     */
+    public function setMessageDescribe(string $messageDescribe)
+    {
+        $this->messageDescribe = $messageDescribe;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -40,7 +61,7 @@ class BasicLog extends DefineLog
      *
      * @return BasicLog
      */
-    public function setMessage($message): BasicLog
+    public function setMessage($message)
     {
         if (is_object($message)) {
             $message = (new ConvertObject($message))

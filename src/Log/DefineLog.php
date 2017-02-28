@@ -44,7 +44,7 @@ abstract class DefineLog
     /** @var string $_SERVER ['SERVER_NAME']运行sql的客户端名称 */
     private $hostname = "";
     /** @var string 触发这条sql运行的客户端ip */
-    private $clientip = "";
+    private $remote_addr = "";
     /** @var string 当前请求的网址 */
     private $url = "";
     /** @var string 来源网址 */
@@ -88,7 +88,7 @@ abstract class DefineLog
         $this->logid = \dk_get_dt_id();
         $this->timestamp = date('c');
         $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
-        $this->clientip = $_SERVER['REMOTE_ADDR'] ?: '';
+        $this->remote_addr = $_SERVER['REMOTE_ADDR'] ?: '127.0.0.1';
         $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
             $_SERVER['REQUEST_URI'];
@@ -214,9 +214,9 @@ abstract class DefineLog
     /**
      * @return string
      */
-    public function getClientip(): string
+    public function getRemoteaddr(): string
     {
-        return $this->clientip;
+        return $this->remote_addr;
     }
 
     /**
@@ -262,12 +262,12 @@ abstract class DefineLog
     }
 
     /**
-     * @param string $clientip
+     * @param string $remote_addr
      * @return static
      */
-    public function setClientip(string $clientip)
+    public function setRemoteaddr(string $remote_addr)
     {
-        $this->clientip = $clientip;
+        $this->remote_addr = $remote_addr;
         return $this;
     }
 

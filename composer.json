@@ -13,12 +13,6 @@
     "ptachoire/tac": "*",
     "xltxlm/helper": "*"
   },
-  "require-dev": {
-    "xltxlm/scrutinizer": "*",
-    "phpunit/phpunit": "*",
-    "squizlabs/php_codesniffer": "*",
-    "friendsofphp/php-cs-fixer": "*"
-  },
   "autoload": {
     "psr-4": {
       "xltxlm\\logger\\": [

@@ -335,8 +335,6 @@ abstract class DefineLog
      */
     final public function __invoke()
     {
-        (new Logger())
-            ->setLogDefine($this)
-            ->__invoke();
+        (new Logger($this))();
     }
 }

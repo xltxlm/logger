@@ -97,6 +97,7 @@ final class Logger
                 ($dirname ? $dirname."/" : '').
                 basename(dirname(dirname(dirname((new \ReflectionClass(ClassLoader::class))
                     ->getFileName())))).
+                date('Ymd').
                 ".log";
         }
         if ($define) {
@@ -112,7 +113,7 @@ final class Logger
     {
         ob_start();
         debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $trace = ob_get_clean();
+        $trace = strtr(ob_get_clean(), ["#" => "\n#"]);
         $this->getLogDefine()->setTrace($trace);
         //如果是错误日志,多开一个记录文件
         if ($this->getLogDefine()->getType() == LogLevel::ERROR) {

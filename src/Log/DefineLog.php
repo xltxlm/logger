@@ -56,8 +56,8 @@ abstract class DefineLog
     /** @var false|float|string 日志记录的时间点 */
     private $timestamp = "";
 
-    /** @var string 代码执行的堆栈路径 */
-    protected $trace = '';
+    /** @var array 代码执行的堆栈路径 */
+    protected $trace = [];
 
     /**
      * DefineLog constructor.
@@ -184,19 +184,19 @@ abstract class DefineLog
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getTrace(): string
+    public function getTrace():array
     {
         return $this->trace;
     }
 
     /**
-     * @param string $trace
+     * @param array $trace
      *
      * @return static
      */
-    public function setTrace(string $trace)
+    public function setTrace(array $trace)
     {
         $this->trace = $trace;
 

@@ -19,6 +19,9 @@ use xltxlm\logger\Log\DefineLog;
  */
 final class Logger
 {
+    /** @var bool 是否开启日志记录 */
+    private static $writelog=true;
+
     /** @var string 日志存储的路径 */
     private static $path = "";
     /** @var string 文件的后缀 */
@@ -27,6 +30,23 @@ final class Logger
     protected $logDefine;
     /** @var int 运行时间超过3秒的,记录为需要优化的类型 */
     protected $timeout = 6;
+
+    /**
+     * @return bool
+     */
+    public static function isWritelog(): bool
+    {
+        return self::$writelog;
+    }
+
+    /**
+     * @param bool $writelog
+     */
+    public static function setWritelog(bool $writelog)
+    {
+        self::$writelog = $writelog;
+    }
+
 
     /**
      * @return int
@@ -90,7 +110,7 @@ final class Logger
      */
     public function __construct($define = null)
     {
-        if (empty(self::$path)) {
+        if (empty(self::$path) && self::$writelog) {
             $dirname = dirname(ini_get('error_log'));
             //如果没有设置 error_log 写到项目的目录上
             self::$path =
@@ -100,7 +120,7 @@ final class Logger
                 date('Ymd').
                 ".log";
         }
-        if ($define) {
+        if ($define && self::$writelog) {
             $this->setLogDefine($define);
         }
     }
@@ -111,9 +131,13 @@ final class Logger
      */
     public function __invoke()
     {
+        //判断是否真正需要写日志
+        if (!self::$writelog) {
+            return;
+        }
         ob_start();
         debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $trace = strtr(ob_get_clean(), ["#" => "\n#"]);
+        $trace = explode('#', ob_get_clean());
         $this->getLogDefine()->setTrace($trace);
         //如果是错误日志,多开一个记录文件
         if ($this->getLogDefine()->getType() == LogLevel::ERROR) {

@@ -89,7 +89,7 @@ abstract class DefineLog
         $this->timestamp = date('c');
         $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
         $this->remote_addr = $_SERVER['REMOTE_ADDR'] ?: '127.0.0.1';
-        $this->url = ($_SERVER['HTTPS'] ? "https" : "http")."://".
+        $this->url = $_SERVER['HTTP_X_FORWARDED_PROTO']."://".
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
             $_SERVER['REQUEST_URI'];
         $this->referer = $_SERVER['HTTP_REFERER'] ?: '';

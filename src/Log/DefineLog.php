@@ -20,6 +20,10 @@ use xltxlm\logger\Logger;
  */
 abstract class DefineLog
 {
+    const LIAN_JIE = "链接";
+    const ZHEN_CHANG = "正常";
+    const CUO_WU = "错误";
+
     use ObjectToJson;
 
     /** @var  array  业务的相关记录 */
@@ -35,6 +39,8 @@ abstract class DefineLog
     protected $runFunction = [];
     /** @var string 资源名称 */
     private $reource = "";
+    /** @var string 操作方式 */
+    private $action = self::LIAN_JIE;
     /** @var string 本次日志前后运行的时间差 */
     private $runTime = 0;
 
@@ -64,7 +70,7 @@ abstract class DefineLog
      */
     public function __construct()
     {
-        include_once __DIR__.'/dk_get_dt_id.php';
+        include_once __DIR__ . '/dk_get_dt_id.php';
         static $uniqid = "";
         if (!$uniqid) {
             $uniqid = uniqid();
@@ -77,7 +83,7 @@ abstract class DefineLog
                 $this->runClass[] = $item['class'];
             }
             if ($item['function']) {
-                $this->runFunction[] = $item['class'].'::'.$item['function'];
+                $this->runFunction[] = $item['class'] . '::' . $item['function'];
             }
         }
         $this->runClass = array_reverse($this->runClass);
@@ -88,9 +94,9 @@ abstract class DefineLog
         $this->logid = \dk_get_dt_id();
         $this->timestamp = date('c');
         $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
-        $this->remote_addr = $_SERVER['REMOTE_ADDR'] ?: '127.0.0.1';
-        $this->url = $_SERVER['HTTP_X_FORWARDED_PROTO']."://".
-            ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']).
+        $this->remote_addr = (string)($_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR']) ?? '';
+        $this->url = $_SERVER['HTTP_X_FORWARDED_PROTO'] . "://" .
+            ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']) .
             $_SERVER['REQUEST_URI'];
         $this->referer = $_SERVER['HTTP_REFERER'] ?: '';
 
@@ -99,6 +105,25 @@ abstract class DefineLog
             $this->$key = $item;
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getAction(): string
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param string $action
+     * @return static
+     */
+    public function setAction(string $action)
+    {
+        $this->action = $action;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -186,7 +211,7 @@ abstract class DefineLog
     /**
      * @return array
      */
-    public function getTrace():array
+    public function getTrace(): array
     {
         return $this->trace;
     }

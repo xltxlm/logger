@@ -10,6 +10,7 @@ namespace xltxlm\logger\Operation\Action;
 
 use xltxlm\logger\Log\BasicLog;
 use xltxlm\logger\Log\DefineLog;
+use xltxlm\logger\Operation\EnumResource;
 
 /**
  * 常规日志记录,记录一个请求的耗时
@@ -24,6 +25,7 @@ class LoadClassLog extends BasicLog
      */
     public function __construct()
     {
+        $this->setReource(EnumResource::WAN_ZHI);
         $this->setAction(DefineLog::ZHEN_CHANG);
         parent::__construct();
     }

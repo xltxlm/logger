@@ -22,8 +22,8 @@ class PdoRunLog extends PdoConnectLog
      */
     public function __construct($pdoConfig = null)
     {
-        $this->setAction(DefineLog::ZHEN_CHANG);
         parent::__construct($pdoConfig);
+        $this->setAction(DefineLog::ZHEN_CHANG);
     }
 
 

@@ -19,5 +19,6 @@ class EnumResource
     const WAN_ZHI = "网址";
     const YOUJ_IAN = "邮件";
     const REDIS = "Redis";
+    const ELASTICSEARCH = "elasticsearch";
     const HTTP = "HTTP";
 }

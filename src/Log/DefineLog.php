@@ -22,6 +22,7 @@ abstract class DefineLog
 {
     const LIAN_JIE = "链接";
     const ZHEN_CHANG = "正常";
+    const DU_QU = "读取";
     const CUO_WU = "错误";
 
     use ObjectToJson;
@@ -43,6 +44,8 @@ abstract class DefineLog
     private $action = self::LIAN_JIE;
     /** @var string 本次日志前后运行的时间差 */
     private $runTime = 0;
+    /** @var string 本次日志到这个点的总耗时 */
+    private $runTimetoHere = 0;
 
     /** @var string 日志的类型 */
     protected $type = LogLevel::INFO;
@@ -91,7 +94,7 @@ abstract class DefineLog
         $this->runFunction = array_reverse($this->runFunction);
 
         $this->uniqid = $uniqid;
-        $this->logid = \dk_get_dt_id();
+        $this->logid = $_SERVER['logid'] ?: \dk_get_dt_id();
         $this->timestamp = date('c');
         $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
         $this->remote_addr = (string)($_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR']) ?? '';
@@ -105,6 +108,25 @@ abstract class DefineLog
             $this->$key = $item;
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getRunTimetoHere(): string
+    {
+        return $this->runTimetoHere;
+    }
+
+    /**
+     * @param string $runTimetoHere
+     * @return DefineLog
+     */
+    public function setRunTimetoHere(string $runTimetoHere): DefineLog
+    {
+        $this->runTimetoHere = $runTimetoHere;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -360,6 +382,7 @@ abstract class DefineLog
      */
     final public function __invoke()
     {
+        $this->runTimetoHere=microtime(true)-$_SERVER['REQUEST_TIME_FLOAT'];
         (new Logger($this))();
     }
 }

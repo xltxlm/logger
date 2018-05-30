@@ -16,7 +16,9 @@ namespace xltxlm\logger\Operation;
 class EnumResource
 {
     const SHU_JU_KU = "数据库";
+    const DAIMA = "代码";
     const WAN_ZHI = "网址";
+    const HAN_SHU = "函数";
     const YOUJ_IAN = "邮件";
     const REDIS = "Redis";
     const ELASTICSEARCH = "elasticsearch";

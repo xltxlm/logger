@@ -19,6 +19,10 @@ use xltxlm\logger\Operation\Connect\RedisConnectLog;
 class RedisRunLog extends RedisConnectLog
 {
     protected $method = "";
+    /** @var string key */
+    protected $key = "";
+    /** @var bool 是否命中缓存 */
+    protected $Cached = false;
 
     /**
      * RedisRunLog constructor.
@@ -28,6 +32,43 @@ class RedisRunLog extends RedisConnectLog
         parent::__construct($message);
         $this->setAction(DefineLog::ZHEN_CHANG);
     }
+
+    /**
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $key
+     * @return RedisRunLog
+     */
+    public function setKey(string $key): RedisRunLog
+    {
+        $this->key = $key;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCached(): bool
+    {
+        return $this->Cached;
+    }
+
+    /**
+     * @param bool $Cached
+     * @return RedisRunLog
+     */
+    public function setCached(bool $Cached): RedisRunLog
+    {
+        $this->Cached = $Cached;
+        return $this;
+    }
+
 
 
     /**

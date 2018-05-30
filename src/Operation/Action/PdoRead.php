@@ -10,6 +10,7 @@ namespace xltxlm\logger\Operation\Action;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Operation\Action\PdoRunLog;
+use xltxlm\orm\PdoInterface;
 
 
 /**
@@ -23,9 +24,9 @@ class PdoRead extends PdoRunLog
     /**
      * PdoRead constructor.
      */
-    public function __construct($pdoConfig = null)
+    public function __construct(PdoInterface $PdoInterface)
     {
-        parent::__construct($pdoConfig);
+        parent::__construct($PdoInterface);
         $this->setAction(DefineLog::DU_QU);
     }
 }

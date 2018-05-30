@@ -8,40 +8,43 @@
 
 namespace xltxlm\logger\Operation\Action;
 
-use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Operation\Connect\PdoConnectLog;
-use xltxlm\orm\Sql\SqlParserd;
+use xltxlm\orm\PdoInterface;
 
 class PdoRunLog extends PdoConnectLog
 {
-    /** @var  sqlParserd */
-    protected $pdoSql;
+
+
+    /** @var int 读取或者更改影响到的行数 */
+    protected $fetchnum = 0;
+
+    /**
+     * @return int
+     */
+    public function getFetchnum(): int
+    {
+        return $this->fetchnum;
+    }
+
+    /**
+     * @param int $fetchnum
+     * @return PdoRunLog
+     */
+    public function setFetchnum(int $fetchnum)
+    {
+        $this->fetchnum = $fetchnum;
+        return $this;
+    }
+
 
     /**
      * PdoRunLog constructor.
      */
-    public function __construct($pdoConfig = null)
+    public function __construct(PdoInterface $PdoInterface)
     {
-        parent::__construct($pdoConfig);
-        $this->setAction(DefineLog::ZHEN_CHANG);
+        parent::__construct($PdoInterface);
+        $this->setAction(PdoConnectLog::ZHI_XIN);
     }
 
 
-    /**
-     * @return SqlParserd
-     */
-    public function getPdoSql(): SqlParserd
-    {
-        return $this->pdoSql;
-    }
-
-    /**
-     * @param SqlParserd $pdoSql
-     * @return PdoRunLog
-     */
-    public function setPdoSql(SqlParserd $pdoSql): PdoRunLog
-    {
-        $this->pdoSql = $pdoSql;
-        return $this;
-    }
 }

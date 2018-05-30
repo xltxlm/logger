@@ -10,8 +10,10 @@ namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
 use xltxlm\helper\Ctroller\LoadClass;
+use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\helper\Hclass\ObjectToJson;
 use xltxlm\logger\Logger;
+use xltxlm\helper\Ctroller\SetExceptionHandler;
 
 /**
  * 日志的基础结构，子类提供__selfConstruct构造函数
@@ -27,87 +29,263 @@ abstract class DefineLog
 
     use ObjectToJson;
 
+    public static $writelog = true;
+
     /** @var  array  业务的相关记录 */
     protected static $businessObject = [];
+    /** @var int 日志的顺序id */
+    protected static $i = [];
+    /** @var array */
+    protected static $uniqids = [];
+    /** @var string 最后一次异常的字符串 */
+    public static $Exceptionstring = "";
 
+
+    /** @var int 在整个进程中，日志的记录顺序，从时间排序是看不出来的，同一秒 */
+    protected $logi = 0;
+    /** @var bool 本次日志是否已经存档，在异常情况下可以确保再次存档 */
+    protected $haveloged = false;
     /** @var string  运行的类名称 */
     protected $logClassName = "";
     /** @var string 运行的类名称 */
     protected $callClass = "";
-    /** @var array  运行的类名称 */
-    protected $runClass = [];
-    /** @var array  运行的函数名称 */
-    protected $runFunction = [];
+    /** @var  mixed 要记录的类,错误日志等 */
+    protected $message;
+    /** @var  string 异常错误 */
+    protected $Exception = "";
     /** @var string 资源名称 */
-    private $reource = "";
+    protected $reource = "";
     /** @var string 操作方式 */
-    private $action = self::LIAN_JIE;
+    protected $action = self::LIAN_JIE;
     /** @var string 本次日志前后运行的时间差 */
-    private $runTime = 0;
+    protected $runTime = 0;
     /** @var string 本次日志到这个点的总耗时 */
-    private $runTimetoHere = 0;
+    protected $runTimetoHere = 0;
 
     /** @var string 日志的类型 */
     protected $type = LogLevel::INFO;
 
     /** @var string $_SERVER ['SERVER_NAME']运行sql的客户端名称 */
-    private $hostname = "";
+    protected $hostname = "";
+    protected $dockername = "";
     /** @var string 触发这条sql运行的客户端ip */
-    private $remote_addr = "";
+    protected $remote_addr = "";
     /** @var string 当前请求的网址 */
-    private $url = "";
+    protected $url = "";
     /** @var string 来源网址 */
-    private $referer = "";
+    protected $referer = "";
     /** @var string 进程唯一id */
-    private $uniqid = "";
+    protected $uniqid = "";
     /** @var string 日志的唯一id */
-    private $logid = "";
+    protected $logid = "";
+    protected $add_time = '';
+    /** @var float 日志记录的时间点 */
+    protected $timestamp_start = 0.0;
     /** @var false|float|string 日志记录的时间点 */
-    private $timestamp = "";
+    protected $timestamp_end = 0.0;
 
     /** @var array 代码执行的堆栈路径 */
     protected $trace = [];
 
+    /** @var string 服务器类型:测试，线上 */
+    protected $HOST_TYPE = '';
+    /** @var string 项目名称 */
+    protected $projectname = '';
+    /** @var string 服务器ip */
+    protected $HOST_IP = '';
+
+    protected $posix_getpid = 0;
+    protected $PHP_SAPI = PHP_SAPI;
+
+    /** @var float 内存使用 */
+    protected $memory = 0.0;
+    /** @var string nginx'生成的日志id */
+    protected $eventid = '';
+
     /**
      * DefineLog constructor.
      */
-    public function __construct()
+    public function __construct($message = null)
     {
-        include_once __DIR__ . '/dk_get_dt_id.php';
-        static $uniqid = "";
-        if (!$uniqid) {
-            $uniqid = uniqid();
+        SetExceptionHandler::setLogOnject($this);
+
+        if ($message) {
+            $this->setMessage($message);
         }
+        $this->add_time = date('Y-m-d H:i:s');
+        include_once __DIR__ . '/dk_get_dt_id.php';
         $this->logClassName = static::class;
         $this->callClass = LoadClass::$runClass;
-        $debug_backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        foreach ($debug_backtrace as $item) {
-            if ($item['class']) {
-                $this->runClass[] = $item['class'];
-            }
-            if ($item['function']) {
-                $this->runFunction[] = $item['class'] . '::' . $item['function'];
+        if (!$this->callClass) {
+            $debug_backtrace = array_reverse(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+            foreach ($debug_backtrace as $item) {
+                if ($item['class']) {
+                    $this->callClass = $item['class'];
+                    break;
+                }
             }
         }
-        $this->runClass = array_reverse($this->runClass);
-        $this->callClass = $this->callClass ?: current($this->runClass);
-        $this->runFunction = array_reverse($this->runFunction);
 
-        $this->uniqid = $uniqid;
+        ob_start();
+        debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $trace = explode('#', ob_get_clean());
+        $this->setTrace($trace);
+
         $this->logid = $_SERVER['logid'] ?: \dk_get_dt_id();
-        $this->timestamp = date('c');
+        $this->timestamp_start = microtime(true);
         $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
         $this->remote_addr = (string)($_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR']) ?? '';
         $this->url = $_SERVER['HTTP_X_FORWARDED_PROTO'] . "://" .
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']) .
             $_SERVER['REQUEST_URI'];
         $this->referer = $_SERVER['HTTP_REFERER'] ?: '';
+        $this->dockername = $_SERVER['dockername'];
+        $this->HOST_IP = $_SERVER['HOST_IP'];
+        $this->HOST_TYPE = $_SERVER['HOST_TYPE'];
+        $this->projectname = $_SERVER['projectname'];
+        $this->posix_getpid = posix_getpid();
+        $this->uniqid = self::getUniqid_static();
+        $this->memory = round(memory_get_usage() / 1048576, 2);
+        $this->eventid = strval($_SERVER['logid']);
 
         //追加全局参数记录
         foreach (self::$businessObject as $key => $item) {
             $this->$key = $item;
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getEventid(): string
+    {
+        return $this->eventid;
+    }
+
+    /**
+     * @param string $eventid
+     * @return $this
+     */
+    public function setEventid(string $eventid)
+    {
+        $this->eventid = $eventid;
+        return $this;
+    }
+
+
+    /**
+     * @return float
+     */
+    public function getMemory(): float
+    {
+        return $this->memory;
+    }
+
+    /**
+     * @param float $memory
+     * @return $this
+     */
+    public function setMemory(float $memory)
+    {
+        $this->memory = $memory;
+        return $this;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public static function isWritelog(): bool
+    {
+        return self::$writelog;
+    }
+
+    /**
+     * @param bool $writelog
+     */
+    public static function setWritelog(bool $writelog)
+    {
+        self::$writelog = $writelog;
+    }
+
+
+    public static function getUniqid_static(): string
+    {
+        $posix_getpid = posix_getpid();
+        //如果是开启多进程，那么每个进程分叉的记录分开
+        if (!self::$uniqids[$posix_getpid]) {
+            self::$uniqids[$posix_getpid] = uniqid();
+        }
+        return self::$uniqids[$posix_getpid];
+    }
+
+    /**
+     * @return string
+     */
+    public function getException(): string
+    {
+        return $this->Exception;
+    }
+
+    /**
+     * @param string $Exception
+     * @return $this
+     */
+    public function setException(string $Exception)
+    {
+        $this->Exception = $Exception;
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getPosixGetpid(): int
+    {
+        return $this->posix_getpid;
+    }
+
+
+    /**
+     * @param int $posix_getpid
+     * @return DefineLog
+     */
+    public function setPosixGetpid(int $posix_getpid)
+    {
+        $this->posix_getpid = $posix_getpid;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDockername(): string
+    {
+        return $this->dockername;
+    }
+
+
+    /**
+     * @param string $dockername
+     * @return DefineLog
+     */
+    public function setDockername(string $dockername): DefineLog
+    {
+        $this->dockername = $dockername;
+        return $this;
+    }
+
+    /**
+     * 如果是处理队列类型的数据，每处理一次数据，重置一下日志的唯一标志
+     */
+    public static function resetUniqids()
+    {
+        $posix_getpid = posix_getpid();
+        unset(self::$uniqids[$posix_getpid]);
+        unset(self::$i[$posix_getpid]);
+    }
+
 
     /**
      * @return string
@@ -291,14 +469,6 @@ abstract class DefineLog
     }
 
     /**
-     * @return false|float|string
-     */
-    public function getTimestamp()
-    {
-        return $this->timestamp;
-    }
-
-    /**
      * @param string $hostname
      * @return static
      */
@@ -348,16 +518,6 @@ abstract class DefineLog
         return $this;
     }
 
-    /**
-     * @param false|float|string $timestamp
-     * @return static
-     */
-    public function setTimestamp($timestamp)
-    {
-        $this->timestamp = $timestamp;
-        return $this;
-    }
-
 
     /**
      * @return string
@@ -378,11 +538,52 @@ abstract class DefineLog
     }
 
     /**
+     * @return string
+     */
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param mixed $message
+     *
+     * @return $this
+     */
+    public function setMessage($message)
+    {
+        if (is_object($message)) {
+            $message = (new ConvertObject($message))
+                ->toArray();
+        }
+        $this->message = $message;
+        return $this;
+    }
+
+    /**
      * 记录日志
      */
-    final public function __invoke()
+    public function __invoke()
     {
-        $this->runTimetoHere=microtime(true)-$_SERVER['REQUEST_TIME_FLOAT'];
-        (new Logger($this))();
+        SetExceptionHandler::setLogOnject(null);
+        $this->runTimetoHere = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
+        self::$i[$this->posix_getpid]++;
+        $this->logi = self::$i[$this->posix_getpid];
+        $this->timestamp_end = microtime(true);
+        $this->runTime = sprintf('%.4f', $this->timestamp_end - $this->timestamp_start);
+        $this->haveloged = true;
     }
+
+    /**
+     * 如果是异常退出，保证记录下数据
+     */
+    public function __destruct()
+    {
+        if (!$this->haveloged) {
+            $this->type = LogLevel::ERROR;
+            $this->setException(self::$Exceptionstring);
+            $this->__invoke();
+        }
+    }
+
 }

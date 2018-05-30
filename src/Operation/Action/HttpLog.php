@@ -8,22 +8,28 @@
 
 namespace xltxlm\logger\Operation\Action;
 
-use xltxlm\logger\Log\BasicLog;
+use xltxlm\guzzlehttp\UrlRequest;
+use xltxlm\logger\Operation\Connect\PdoConnectLog;
 use xltxlm\logger\Operation\EnumResource;
 
 /**
  * 网址请求耗时日志
  * Class HttpLog
  */
-class HttpLog extends BasicLog
+class HttpLog extends PdoConnectLog
 {
 
     /**
      * HttpLog constructor.
      */
-    public function __construct($message = null)
+    public function __construct(UrlRequest $urlRequest = null)
     {
-        $this->setReource(EnumResource::HTTP);
-        parent::__construct($message);
+        parent::__construct();
+        $parse_url = parse_url($urlRequest->getUrl(),PHP_URL_HOST);
+        $this->setMessage($urlRequest)
+            ->setTableName($parse_url)
+            ->setAction(EnumResource::HTTP)
+            ->setPdoSql($urlRequest->getUrl())
+            ->setSqlbinds(is_array($urlRequest->getBody()) ? $urlRequest->getBody() : [$urlRequest->getBody()]);
     }
 }

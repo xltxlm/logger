@@ -16,18 +16,9 @@ use xltxlm\helper\Hclass\ConvertObject;
  */
 class BasicLog extends DefineLog
 {
-    /** @var  mixed 要记录的类 */
-    protected $message;
-    /** @var  string */
-    protected $messageDescribe = "";
 
-    public function __construct($message = null)
-    {
-        parent::__construct();
-        if ($message) {
-            $this->setMessage($message);
-        }
-    }
+    /** @var  string 文字性的描述*/
+    protected $messageDescribe = "";
 
     /**
      * @return string
@@ -48,27 +39,4 @@ class BasicLog extends DefineLog
     }
 
 
-    /**
-     * @return string
-     */
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-
-    /**
-     * @param mixed $message
-     *
-     * @return BasicLog
-     */
-    public function setMessage($message)
-    {
-        if (is_object($message)) {
-            $message = (new ConvertObject($message))
-                ->toArray();
-        }
-        $this->message = $message;
-
-        return $this;
-    }
 }

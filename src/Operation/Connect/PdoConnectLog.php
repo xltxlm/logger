@@ -8,6 +8,8 @@
 
 namespace xltxlm\logger\Operation\Connect;
 
+use Psr\Log\LogLevel;
+use xltxlm\helper\Basic\Str;
 use xltxlm\logger\Log\BasicLog;
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Operation\Action\PdoRunLog;
@@ -15,7 +17,8 @@ use xltxlm\logger\Operation\EnumResource;
 use xltxlm\orm\Config\PDO;
 use xltxlm\orm\Config\PdoConfig;
 use xltxlm\orm\PdoInterface;
-use xltxlm\statistics\Config\KuaigengReview\MysqllogModel;
+use xltxlm\snownum\Config\RedisCacheConfig;
+use xltxlm\statistics\Config\Kkreview\MysqllogModel;
 
 class PdoConnectLog extends BasicLog
 {
@@ -39,6 +42,27 @@ class PdoConnectLog extends BasicLog
     /** @var  string */
     protected $pdoSql = "";
     protected $sqlbinds = [];
+
+    /** @var bool 本条记录是否写入日志文件 */
+    protected $writefilelog = true;
+
+    /**
+     * @return bool
+     */
+    public function isWritefilelog(): bool
+    {
+        return $this->writefilelog;
+    }
+
+    /**
+     * @param bool $writefilelog
+     * @return $this
+     */
+    public function setWritefilelog(bool $writefilelog)
+    {
+        $this->writefilelog = $writefilelog;
+        return $this;
+    }
 
 
     /** @var string 执行语句的表格名称 */
@@ -251,8 +275,9 @@ class PdoConnectLog extends BasicLog
     public function __invoke()
     {
         //判断是否真正需要写日志
-        if (!DefineLog::$writelog) {
-            return;
+        $不需要写入日志 = !DefineLog::$writelog || $this->isWritefilelog() == false;
+        if ($不需要写入日志) {
+            return null;
         }
         parent::__invoke();
         $buffer = get_object_vars($this);
@@ -262,15 +287,15 @@ class PdoConnectLog extends BasicLog
         $mysqllogModel
             ->setId($id)
             ->setHost_ip($buffer['HOST_IP'])
-            ->setDockername($buffer['dockername'])
-            ->setProject_name($buffer['projectname'])
-            ->setTable_name($buffer['table_name'])
-            ->setPdoSql($buffer['pdoSql'])
+            ->setDockername($this->getDockername())
+            ->setProject_name($this->getProjectname())
+            ->setTable_name($this->getTableName())
+            ->setPdoSql($this->getPdoSql())
             ->setSqlbinds(json_encode($buffer['sqlbinds'] ?: [], JSON_UNESCAPED_UNICODE))
             ->setRunTime($buffer['runTime'])
-            ->setThread_id($buffer['thread_id'])
-            ->setPosix_getpid($buffer['posix_getpid'])
-            ->setLogid($buffer['logid'])
+            ->setThread_id($this->getThreadId())
+            ->setPosix_getpid($this->getPosixGetpid())
+            ->setLogid($this->getLogid())
             ->setCallClass($buffer['callClass'])
             ->setHostname($buffer['hostname'])
             ->setFetchnum($buffer['fetchnum']);
@@ -281,20 +306,24 @@ class PdoConnectLog extends BasicLog
             ->setAdd_time($buffer['add_time'])
             ->setUpdate_time(date('Y-m-d H:i:s'))
             ->setUniqid($buffer['uniqid'])
-            ->setAction($buffer['action'])
+            ->setAction($this->getAction())
             ->setSqlaction($buffer['sqlaction'])
             ->setLogi($buffer['logi'])
             ->setTns($buffer['tns'])
             ->setTransaction($buffer['Transaction'] ? '是' : '否')
-            ->setMessagetype($buffer['type'])
+            ->setMessagetype($this->getType());
+        //如果是错误日志,记录全部的调试信息,否则简化
+        $mysqllogModel
             ->setException($buffer['Exception'])
-            ->setTrace(join("\n", $buffer['trace']));
+            ->setTrace(join("\n", $this->getTrace()));
         $mysqllogModel
             ->setEventid($this->getEventid())
             ->setMemory($buffer['memory']);
 
         $data = sprintf('{ "index":  { "_index": "mysqllog", "_type": "data","_id":"%s"}}' . "\n", $id) . $mysqllogModel->__toString() . "\n";
-        file_put_contents("/var/www/html/log@" . date('YmdHi') . ".json", $data, FILE_APPEND);
+        (new RedisCacheConfig())
+            ->__invoke()
+            ->lPush('log_list',$data);
     }
 
 }

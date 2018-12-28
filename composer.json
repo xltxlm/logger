@@ -1,28 +1,23 @@
 {
   "name": "xltxlm/logger",
-  "description": "日志记录类，记录的格式化json日志，供日后ELK分析，存储在error_log的同等目录下",
   "authors": [
     {
-      "name": "xltxlm",
+      "name": "copygithub",
       "email": "xltxlm@qq.com"
     }
   ],
+  "minimum-stability": "dev",
+  "description":"日志记录类，记录的格式化json日志，供日后ELK分析",
   "require": {
-    "php": ">=7.0",
+    "php": "~7.1",
+    "xltxlm/helper": "@dev",
     "psr/log": "*",
-    "ptachoire/tac": "*",
-    "xltxlm/helper": "*"
+    "xltxlm/guzzlehttp": "@dev"
   },
   "autoload": {
     "psr-4": {
       "xltxlm\\logger\\": [
-        "src/"
-      ]
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "xltxlm\\logger\\": [
+        "src/",
         "./"
       ]
     }

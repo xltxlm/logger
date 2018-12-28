@@ -9,11 +9,12 @@
 namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
+use xltxlm\helper\Basic\Str;
 use xltxlm\helper\Ctroller\LoadClass;
 use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\helper\Hclass\ObjectToJson;
-use xltxlm\logger\Logger;
 use xltxlm\helper\Ctroller\SetExceptionHandler;
+use xltxlm\orm\Config\PdoConfig;
 
 /**
  * 日志的基础结构，子类提供__selfConstruct构造函数
@@ -43,6 +44,26 @@ abstract class DefineLog
 
     /** @var int 在整个进程中，日志的记录顺序，从时间排序是看不出来的，同一秒 */
     protected $logi = 0;
+
+    /**
+     * @return int
+     */
+    public function getLogi(): int
+    {
+        return $this->logi;
+    }
+
+    /**
+     * @param int $logi
+     * @return DefineLog
+     */
+    public function setLogi(int $logi): DefineLog
+    {
+        $this->logi = $logi;
+        return $this;
+    }
+
+
     /** @var bool 本次日志是否已经存档，在异常情况下可以确保再次存档 */
     protected $haveloged = false;
     /** @var string  运行的类名称 */
@@ -70,6 +91,7 @@ abstract class DefineLog
     protected $dockername = "";
     /** @var string 触发这条sql运行的客户端ip */
     protected $remote_addr = "";
+
     /** @var string 当前请求的网址 */
     protected $url = "";
     /** @var string 来源网址 */
@@ -91,8 +113,66 @@ abstract class DefineLog
     protected $HOST_TYPE = '';
     /** @var string 项目名称 */
     protected $projectname = '';
+
+    /**
+     * @return string
+     */
+    public function getProjectname(): string
+    {
+        return $this->projectname;
+    }
+
+    /**
+     * @param string $projectname
+     * @return DefineLog
+     */
+    public function setProjectname(string $projectname): DefineLog
+    {
+        $this->projectname = $projectname;
+        return $this;
+    }
+
+    protected $from_event = '';
+
+    /**
+     * @return string
+     */
+    public function getFromEvent(): string
+    {
+        return $this->from_event;
+    }
+
+    /**
+     * @param string $from_event
+     * @return $this
+     */
+    public function setFromEvent(string $from_event)
+    {
+        $this->from_event = $from_event;
+        return $this;
+    }
+
+
     /** @var string 服务器ip */
     protected $HOST_IP = '';
+
+    /**
+     * @return string
+     */
+    public function getHOSTIP(): string
+    {
+        return $this->HOST_IP;
+    }
+
+    /**
+     * @param string $HOST_IP
+     * @return $this
+     */
+    public function setHOSTIP(string $HOST_IP)
+    {
+        $this->HOST_IP = $HOST_IP;
+        return $this;
+    }
 
     protected $posix_getpid = 0;
     protected $PHP_SAPI = PHP_SAPI;
@@ -101,6 +181,27 @@ abstract class DefineLog
     protected $memory = 0.0;
     /** @var string nginx'生成的日志id */
     protected $eventid = '';
+
+    protected $username;
+
+    /**
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param mixed $username
+     * @return DefineLog
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
 
     /**
      * DefineLog constructor.
@@ -125,6 +226,18 @@ abstract class DefineLog
                 }
             }
         }
+        $this->setUsername($_COOKIE['username']);
+
+        if (PHP_SAPI == 'cli') {
+            $this->setFromEvent('任务');
+        } else {
+            if ($_GET['c'] && (new Str())->setValue($_GET['c'])->Strpos('Grpc/')) {
+                $this->setFromEvent('Grpc');
+            } else {
+                $this->setFromEvent('网页');
+            }
+        }
+
 
         ob_start();
         debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -139,7 +252,7 @@ abstract class DefineLog
             ($_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_ADDR']) .
             $_SERVER['REQUEST_URI'];
         $this->referer = $_SERVER['HTTP_REFERER'] ?: '';
-        $this->dockername = $_SERVER['dockername'];
+        $this->dockername = (string)($_SERVER['dockername']);
         $this->HOST_IP = $_SERVER['HOST_IP'];
         $this->HOST_TYPE = $_SERVER['HOST_TYPE'];
         $this->projectname = $_SERVER['projectname'];
@@ -284,6 +397,8 @@ abstract class DefineLog
         $posix_getpid = posix_getpid();
         unset(self::$uniqids[$posix_getpid]);
         unset(self::$i[$posix_getpid]);
+        //重新设置数据库的值
+        PdoConfig::unsetAllinstance();
     }
 
 

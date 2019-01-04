@@ -321,9 +321,13 @@ class PdoConnectLog extends BasicLog
             ->setMemory($buffer['memory']);
 
         $data = sprintf('{ "index":  { "_index": "mysqllog", "_type": "data","_id":"%s"}}' . "\n", $id) . $mysqllogModel->__toString() . "\n";
-        (new RedisCacheConfig())
-            ->__invoke()
-            ->lPush('log_list',$data);
+        try {
+            (new RedisCacheConfig())
+                ->__invoke()
+                ->lPush('log_list', $data);
+        } catch (\Exception $e) {
+            \xltxlm\helper\Util::d([$e->getMessage(),$e->getFile(),$e->getLine()]);
+        }
     }
 
 }

@@ -198,10 +198,12 @@ class BusinessLog extends BasicLog
             ->setTrace($this->getTrace());
 
         $data = sprintf('{ "index":  { "_index": "businesslog", "_type": "data","_id":"%s"}}' . "\n", $id) . $BusinesslogModel->__toString() . "\n";
-        (new RedisCacheConfig())
-            ->__invoke()
-            ->lPush('log_list', $data);
-        //file_put_contents("/var/www/html/log@" . date('YmdHi') . ".json", $data, FILE_APPEND);
-
+        try {
+            (new RedisCacheConfig())
+                ->__invoke()
+                ->lPush('log_list', $data);
+        } catch (\Exception $e) {
+            \xltxlm\helper\Util::d([$e->getMessage(),$e->getFile(),$e->getLine()]);
+        }
     }
 }

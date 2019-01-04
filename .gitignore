@@ -1,3 +1,6 @@
 /vendor/
 .idea
 composer.lock
+project
+temp
+gitpush.sh

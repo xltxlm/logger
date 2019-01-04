@@ -10,10 +10,10 @@
   "description":"日志记录类，记录的格式化json日志，供日后ELK分析",
   "require": {
     "php": "~7.1",
-    "xltxlm/orm": "@dev",
     "xltxlm/helper": "@dev",
     "psr/log": "*",
-    "xltxlm/guzzlehttp": "@dev"
+    "xltxlm/guzzlehttp": "@dev",
+    "xltxlm/resources": "@dev"
   },
   "autoload": {
     "psr-4": {

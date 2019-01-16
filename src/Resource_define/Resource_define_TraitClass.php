@@ -14,6 +14,17 @@ trait Resource_define_TraitClass
 {
     use Resource_define_TraitClass\Resource_define_TraitClass_implements;
 
+    /**
+     * @param string $resources_type
+     * @return $this
+     */
+    public function setresources_type(string $resources_type = "数据库")
+    {
+        $this->resources_type = $resources_type;
+        Resource_define_TraitClass::$connect_times++;
+        return $this;
+    }
+
 
     public function __invoke()
     {
@@ -57,6 +68,13 @@ trait Resource_define_TraitClass
             (new RedisCacheConfig())
                 ->__invoke()
                 ->lPush('log_list', $data);
+
+            $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"resource_connect":"' . Resource_define_TraitClass::$connect_times . '"}}' . "\n";
+
+            (new RedisCacheConfig())
+                ->__invoke()
+                ->lPush('log_list', $data);
+
             $this->sethaveloged(true);
         } catch (\Exception $e) {
             \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);

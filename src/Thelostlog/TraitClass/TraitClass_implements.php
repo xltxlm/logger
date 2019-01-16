@@ -53,6 +53,27 @@ trait TraitClass_implements
         return $this;
     }
 
+    /* @var int  日志记录的次数 */
+    public static $log_times = 0;
+    
+    /**
+    * @return int;
+    */
+    public function getlog_times():int
+    {
+        return static::$log_times;
+    }
+
+    /**
+    * @param int $log_times;
+    * @return $this
+    */
+    public function setlog_times(int $log_times  = 0)
+    {
+        static::$log_times = $log_times;
+        return $this;
+    }
+
     /**
     *  生成json字符串,写入日志服务器上面;
     *  @return ;

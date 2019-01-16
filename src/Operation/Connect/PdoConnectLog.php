@@ -304,7 +304,6 @@ class PdoConnectLog extends BasicLog
             ->setRemote_addr($buffer['remote_addr'])
             ->setReferer($buffer['referer'])
             ->setAdd_time($buffer['add_time'])
-            ->setUpdate_time(date('Y-m-d H:i:s'))
             ->setUniqid($buffer['uniqid'])
             ->setAction($this->getAction())
             ->setSqlaction($buffer['sqlaction'])

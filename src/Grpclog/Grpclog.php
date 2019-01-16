@@ -1,0 +1,73 @@
+<?php
+
+namespace xltxlm\logger\Grpclog;
+
+use xltxlm\logger\Log\DefineLog;
+use xltxlm\logger\Log\Destruct_Log;
+use xltxlm\snownum\Config\RedisCacheConfig;
+use xltxlm\statistics\Config\Kkreview\GrpclogModel;
+
+/**
+ * 记录远程请求的日志;
+ */
+class Grpclog extends Grpclog\Grpclog_implements
+{
+    public function __invoke()
+    {
+        //判断是否真正需要写日志
+        $不需要写入日志 = DefineLog::$writelog == false;
+        if ($不需要写入日志) {
+            return null;
+        }
+
+        try {
+            $posixid = posix_getpid();
+            Destruct_Log::$posix_log_num[$posixid]++;
+            $log_num = Destruct_Log::$posix_log_num[$posixid];
+            $logid = \dk_get_next_id();
+            $uniqid = DefineLog::getUniqid_static();
+            $id = $logid . $_SERVER['dockername'] . $uniqid . '@' . $log_num;
+
+            $time = date('Y-m-d H:i:s');
+            $GrpclogModel = (new GrpclogModel)
+                ->setId($id)
+                ->setPosixid($posixid)
+                ->setPosix_log_num($log_num)
+                ->setLogid((string)$_SERVER['logid'])
+                ->setProject_name((string)$_SERVER['projectname'])
+                ->setrundocker((string)$_SERVER['dockername'])
+                ->setusername((string)$_COOKIE['username'])
+                ->setusernameip((string)$_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'])
+                ->setuse_time(sprintf('%.4f', microtime(true) - $this->timestamp_start))
+                ->setAdd_time($time);
+
+            $GrpclogModel
+                ->setmodel_name($this->getmodel_name())
+                ->setKeyid($this->getKeyid())
+                ->setLogtype($this->getLogtype())
+                ->setip($this->getip())
+                ->setport($this->getport())
+                ->setreturn_data((string)$this->getreturn_data())
+                ->setrequest_data($this->getrequest_data())
+                ->seterror($this->geterror());
+
+            $data = sprintf('{ "index":  { "_index": "grpclog", "_type": "data","_id":"%s"}}' . "\n", $id) . $GrpclogModel->__toString() . "\n";
+
+            (new RedisCacheConfig())
+                ->__invoke()
+                ->lPush('log_list', $data);
+
+            Grpclog::$log_times++;
+            $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"grpc":"' . (string)Grpclog::$log_times . '"}}' . "\n";
+
+            (new RedisCacheConfig())
+                ->__invoke()
+                ->lPush('log_list', $data);
+
+            $this->sethaveloged(true);
+        } catch (\Exception $e) {
+            \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
+        }
+    }
+
+}

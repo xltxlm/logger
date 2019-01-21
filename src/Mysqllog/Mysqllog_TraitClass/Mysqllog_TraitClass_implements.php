@@ -251,25 +251,4 @@ abstract class Mysqllog_TraitClass_implements
         $this->trace = $trace;
         return $this;
     }
-
-    /* @var int  执行次数 */
-    public static $connect_times = 0;
-    
-    /**
-    * @return int;
-    */
-    public function getconnect_times():int
-    {
-        return static::$connect_times;
-    }
-
-    /**
-    * @param int $connect_times;
-    * @return $this
-    */
-    protected function setconnect_times(int $connect_times  = 0)
-    {
-        static::$connect_times = $connect_times;
-        return $this;
-    }
 }

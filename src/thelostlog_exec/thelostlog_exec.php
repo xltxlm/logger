@@ -1,19 +1,18 @@
 <?php
 
-namespace xltxlm\logger\Resource_define;
+namespace xltxlm\logger\thelostlog_exec;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
+use \xltxlm\logger\Resource_define\Resource_define_TraitClass;
 use xltxlm\snownum\Config\RedisCacheConfig;
-use xltxlm\statistics\Config\Kkreview\Thelostlog_resource_defineModel;
+use xltxlm\statistics\Config\Kkreview\Thelostlog_execModel;
 
 /**
- * 资源链接日志;
+ * 命令行执行的日志;
  */
-trait Resource_define_TraitClass
+class thelostlog_exec extends thelostlog_exec\thelostlog_exec_implements
 {
-    use Resource_define_TraitClass\Resource_define_TraitClass_implements;
-
     public function __invoke()
     {
         //判断是否真正需要写日志
@@ -21,7 +20,6 @@ trait Resource_define_TraitClass
         if ($不需要写入日志) {
             return null;
         }
-
         try {
             $posixid = posix_getpid();
             Destruct_Log::$posix_log_num[$posixid]++;
@@ -30,39 +28,40 @@ trait Resource_define_TraitClass
             $uniqid = DefineLog::getUniqid_static();
             $id = $logid . $_SERVER['dockername'] . $uniqid . '@' . $log_num;
 
-            $thelostlogModel = (new Thelostlog_resource_defineModel());
-            $thelostlogModel
+            $thelostlog_execModel = new Thelostlog_execModel();
+            $thelostlog_execModel
                 ->setId($id)
                 ->setProject_name((string)$_SERVER['projectname'])
-                ->setDockname((string)$_SERVER['dockername'])
+                ->setDockername((string)$_SERVER['dockername'])
                 ->setLogid((string)$_SERVER['logid'])
-                ->setResources_type($this->getresources_type())
                 ->setExecution_time(sprintf('%.4f', microtime(true) - $this->timestamp_start))
                 ->setAtcion_entrance($this->getAtcion_entrance())
                 ->setPosixid($posixid)
                 ->setPosix_log_num($log_num)
-                ->setUniqueid($uniqid)
                 ->setUsername((string)$_COOKIE['username'])
                 ->setAdd_time(date('Y-m-d H:i:s'));
 
-            $thelostlogModel
-                ->setTns((string)$this->gettns())
-                ->setUser((string)$this->getuser())
-                ->setPort((string)$this->getport());
+            $thelostlog_execModel
+                ->setCommand($this->getcommand())
+                ->setResult($this->getresult())
+                ->setError($this->geterror());
 
-
-            $data = sprintf('{ "index":  { "_index": "thelostlog_resource_define", "_type": "data","_id":"%s"}}' . "\n", $id) . $thelostlogModel->__toString() . "\n";
+            $data = sprintf('{ "index":  { "_index": "thelostlog_exec", "_type": "data","_id":"%s"}}' . "\n", $id) . $thelostlog_execModel->__toString() . "\n";
 
             (new RedisCacheConfig())
                 ->__invoke()
                 ->lPush('log_list', $data);
-            Destruct_Log::$log_cout['resource_connect']++;
+
+            Destruct_Log::$log_cout['exec']++;
+            //错误日志+1
+            if ($this->geterror()) {
+                Destruct_Log::$log_cout['error']++;
+            }
 
             $this->sethaveloged(true);
         } catch (\Exception $e) {
             \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
         }
     }
-
 
 }

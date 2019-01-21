@@ -57,13 +57,11 @@ class Grpclog extends Grpclog\Grpclog_implements
                 ->__invoke()
                 ->lPush('log_list', $data);
 
-            Grpclog::$log_times++;
-            $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"grpc":"' . (string)Grpclog::$log_times . '"}}' . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
-
+            Destruct_Log::$log_cout['grpc']++;
+            //错误日志+1
+            if ($this->geterror()) {
+                Destruct_Log::$log_cout['error']++;
+            }
             $this->sethaveloged(true);
         } catch (\Exception $e) {
             \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);

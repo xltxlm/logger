@@ -64,14 +64,12 @@ class Mysqllog_TraitClass extends Mysqllog_TraitClass\Mysqllog_TraitClass_implem
             (new RedisCacheConfig())
                 ->__invoke()
                 ->lPush('log_list', $data);
-
-            Mysqllog_TraitClass::$connect_times++;
-            $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"mysqllog":"' . Mysqllog_TraitClass::$connect_times . '"}}' . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
-
+            //SQL执行次数+1
+            Destruct_Log::$log_cout['mysqllog']++;
+            //错误日志+1
+            if ($this->getmessagetype() == Mysqllog_TraitClass::MESSAGETYPE_ERROR) {
+                Destruct_Log::$log_cout['error']++;
+            }
             $this->sethaveloged(true);
         } catch (\Exception $e) {
             \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);

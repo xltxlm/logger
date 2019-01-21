@@ -97,6 +97,27 @@ trait Destruct_Log_implements
         return $this;
     }
 
+    /* @var array  各种日志条数的统计存储 */
+    public static $log_cout = [];
+
+    /**
+    * @return array;
+    */
+    public function getlog_cout():array
+    {
+        return static::$log_cout;
+    }
+
+    /**
+    * @param array $log_cout;
+    * @return $this
+    */
+    protected function setlog_cout(array $log_cout  = [])
+    {
+        static::$log_cout = $log_cout;
+        return $this;
+    }
+
     /**
     *  析构的时候,尝试写入日志;
     *  @return ;

@@ -53,24 +53,24 @@ trait TraitClass_implements
         return $this;
     }
 
-    /* @var int  日志记录的次数 */
-    public static $log_times = 0;
-    
+    /* @var string  日志类型是信息还是错误 */
+    protected $message_type = 'info';
+
     /**
-    * @return int;
+    * @return string;
     */
-    public function getlog_times():int
+    public function getmessage_type():string
     {
-        return static::$log_times;
+        return $this->message_type;
     }
 
     /**
-    * @param int $log_times;
+    * @param string $message_type;
     * @return $this
     */
-    public function setlog_times(int $log_times  = 0)
+    public function setmessage_type(string $message_type  = "info")
     {
-        static::$log_times = $log_times;
+        $this->message_type = $message_type;
         return $this;
     }
 

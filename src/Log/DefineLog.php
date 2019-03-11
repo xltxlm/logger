@@ -244,7 +244,7 @@ abstract class DefineLog
         $trace = explode('#', ob_get_clean());
         $this->setTrace($trace);
 
-        $this->logid = $_SERVER['logid'] ?: \dk_get_dt_id();
+        $this->logid = $_SERVER['logid'] ?: \dk_get_next_id();
         $this->timestamp_start = microtime(true);
         $this->hostname = $_SERVER ['SERVER_NAME'] ?: '';
         $this->remote_addr = (string)($_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR']) ?? '';

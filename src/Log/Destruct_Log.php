@@ -2,6 +2,8 @@
 
 namespace xltxlm\logger\Log;
 
+include_once __DIR__ . '/dk_get_dt_id.php';
+
 /**
  * 在类注销的时候,写入日志;
  */

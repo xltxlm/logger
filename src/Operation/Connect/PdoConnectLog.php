@@ -8,8 +8,6 @@
 
 namespace xltxlm\logger\Operation\Connect;
 
-use Psr\Log\LogLevel;
-use xltxlm\helper\Basic\Str;
 use xltxlm\logger\Log\BasicLog;
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Operation\Action\PdoRunLog;
@@ -17,7 +15,6 @@ use xltxlm\logger\Operation\EnumResource;
 use xltxlm\orm\Config\PDO;
 use xltxlm\orm\Config\PdoConfig;
 use xltxlm\orm\PdoInterface;
-use xltxlm\snownum\Config\RedisCacheConfig;
 use xltxlm\statistics\Config\Kkreview\MysqllogModel;
 
 class PdoConnectLog extends BasicLog
@@ -319,14 +316,7 @@ class PdoConnectLog extends BasicLog
             ->setEventid($this->getEventid())
             ->setMemory($buffer['memory']);
 
-        $data = sprintf('{ "index":  { "_index": "mysqllog", "_type": "data","_id":"%s"}}' . "\n", $id) . $mysqllogModel->__toString() . "\n";
-        try {
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
-        } catch (\Exception $e) {
-            \xltxlm\helper\Util::d([$e->getMessage(),$e->getFile(),$e->getLine()]);
-        }
+        error_log($mysqllogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
     }
 
 }

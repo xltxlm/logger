@@ -3,9 +3,7 @@
 namespace xltxlm\logger\Mysqllog;
 
 use xltxlm\logger\Log\DefineLog;
-use \xltxlm\logger\Log\Destruct_Log;
-use xltxlm\logger\Mysqllog\Mysqllog_TraitClass\Mysqllog_TraitClass_implements;
-use xltxlm\snownum\Config\RedisCacheConfig;
+use xltxlm\logger\Log\Destruct_Log;
 use xltxlm\statistics\Config\Kkreview\MysqllogModel;
 
 /** @var \xltxlm\logger\Mysqllog\Mysqllog_TraitClass $this */
@@ -57,13 +55,7 @@ class Mysqllog_TraitClass extends Mysqllog_TraitClass\Mysqllog_TraitClass_implem
                 ->setMessagetype((string)$this->getmessagetype())
                 ->setException($this->getexception())
                 ->setTrace((string)(new \Exception())->getTraceAsString());
-
-
-            $data = sprintf('{ "index":  { "_index": "mysqllog", "_type": "data","_id":"%s"}}' . "\n", $id) . $MysqllogModel->__toString() . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
+            error_log($MysqllogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
             //SQL执行次数+1
             Destruct_Log::$log_cout['mysqllog']++;
             //错误日志+1

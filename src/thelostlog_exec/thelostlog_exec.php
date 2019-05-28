@@ -4,8 +4,6 @@ namespace xltxlm\logger\thelostlog_exec;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
-use \xltxlm\logger\Resource_define\Resource_define_TraitClass;
-use xltxlm\snownum\Config\RedisCacheConfig;
 use xltxlm\statistics\Config\Kkreview\Thelostlog_execModel;
 
 /**
@@ -46,11 +44,7 @@ class thelostlog_exec extends thelostlog_exec\thelostlog_exec_implements
                 ->setResult($this->getresult())
                 ->setError($this->geterror());
 
-            $data = sprintf('{ "index":  { "_index": "thelostlog_exec", "_type": "data","_id":"%s"}}' . "\n", $id) . $thelostlog_execModel->__toString() . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
+            error_log($thelostlog_execModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
 
             Destruct_Log::$log_cout['exec']++;
             //错误日志+1

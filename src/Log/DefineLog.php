@@ -119,7 +119,7 @@ abstract class DefineLog
      */
     public function getProjectname(): string
     {
-        return $this->projectname;
+        return $this->projectname?:$_SERVER['project'];
     }
 
     /**
@@ -128,7 +128,7 @@ abstract class DefineLog
      */
     public function setProjectname(string $projectname): DefineLog
     {
-        $this->projectname = $projectname;
+        $this->projectname = strval($projectname?:$_SERVER['project']);
         return $this;
     }
 
@@ -161,7 +161,7 @@ abstract class DefineLog
      */
     public function getHOSTIP(): string
     {
-        return $this->HOST_IP;
+        return $this->HOST_IP?:'';
     }
 
     /**

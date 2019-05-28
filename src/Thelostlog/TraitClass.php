@@ -5,7 +5,6 @@ namespace xltxlm\logger\Thelostlog;
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
 use xltxlm\logger\Mysqllog\Mysqllog_TraitClass;
-use xltxlm\snownum\Config\RedisCacheConfig;
 use xltxlm\statistics\Config\Kkreview\ThelostlogModel;
 
 /**
@@ -60,12 +59,7 @@ trait TraitClass
             $thelostlogModel
                 ->setMessage_type($this->getmessage_type());
 
-
-            $data = sprintf('{ "index":  { "_index": "thelostlog", "_type": "data","_id":"%s"}}' . "\n", $id) . $thelostlogModel->__toString() . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
+            error_log($thelostlogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
             if ($this->getmessage_type() == Mysqllog_TraitClass::MESSAGETYPE_ERROR) {
                 Destruct_Log::$log_cout['error']++;
             }

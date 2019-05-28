@@ -4,7 +4,6 @@ namespace xltxlm\logger\Thelostlog_thread;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
-use xltxlm\snownum\Config\RedisCacheConfig;
 use xltxlm\statistics\Config\Kkreview\Thelostlog_threadModel;
 
 /**
@@ -43,50 +42,47 @@ class Thelostlog_thread extends Thelostlog_thread\Thelostlog_thread_implements
                 ->setError_count(Destruct_Log::$log_cout['error']);
 
             //1:写入进程的总日志.
-            $data = sprintf('{ "index":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", $id) . $Thelostlog_threadModel->__toString() . "\n";
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
+            error_log($Thelostlog_threadModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
 
-            //2:开始逐条计算各个类型日志的条数
-            if ($_SERVER['logid']) {
-                //a:资源链接
-                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"resource_connect":"' . Destruct_Log::$log_cout['resource_connect'] . '","fromlog":"resource_connect"}}' . "\n";
-
-                (new RedisCacheConfig())
-                    ->__invoke()
-                    ->lPush('log_list', $data);
-                //b:mysql
-                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"mysqllog":"' . Destruct_Log::$log_cout['mysqllog'] . '","fromlog":"mysqllog"}}' . "\n";
-
-                (new RedisCacheConfig())
-                    ->__invoke()
-                    ->lPush('log_list', $data);
-                //c:逻辑
-                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"logic":"' . Destruct_Log::$log_cout['logic'] . '","fromlog":"logic"}}' . "\n";
-
-                (new RedisCacheConfig())
-                    ->__invoke()
-                    ->lPush('log_list', $data);
-                //c:接口
-                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"grpc":"' . Destruct_Log::$log_cout['grpc'] . '","fromlog":"grpc"}}' . "\n";
-
-                (new RedisCacheConfig())
-                    ->__invoke()
-                    ->lPush('log_list', $data);
-                //d:系统命令
-                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"exec":"' . Destruct_Log::$log_cout['exec'] . '","fromlog":"exec"}}' . "\n";
-
-                (new RedisCacheConfig())
-                    ->__invoke()
-                    ->lPush('log_list', $data);
-                //e:redis
-                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"redis":"' . Destruct_Log::$log_cout['redis'] . '","fromlog":"redis"}}' . "\n";
-
-                (new RedisCacheConfig())
-                    ->__invoke()
-                    ->lPush('log_list', $data);
-            }
+//            //2:开始逐条计算各个类型日志的条数
+//            if ($_SERVER['logid']) {
+//                //a:资源链接
+//                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"resource_connect":"' . Destruct_Log::$log_cout['resource_connect'] . '","fromlog":"resource_connect"}}' . "\n";
+//
+//                (new RedisCacheConfig())
+//                    ->__invoke()
+//                    ->lPush('log_list', $data);
+//                //b:mysql
+//                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"mysqllog":"' . Destruct_Log::$log_cout['mysqllog'] . '","fromlog":"mysqllog"}}' . "\n";
+//
+//                (new RedisCacheConfig())
+//                    ->__invoke()
+//                    ->lPush('log_list', $data);
+//                //c:逻辑
+//                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"logic":"' . Destruct_Log::$log_cout['logic'] . '","fromlog":"logic"}}' . "\n";
+//
+//                (new RedisCacheConfig())
+//                    ->__invoke()
+//                    ->lPush('log_list', $data);
+//                //c:接口
+//                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"grpc":"' . Destruct_Log::$log_cout['grpc'] . '","fromlog":"grpc"}}' . "\n";
+//
+//                (new RedisCacheConfig())
+//                    ->__invoke()
+//                    ->lPush('log_list', $data);
+//                //d:系统命令
+//                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"exec":"' . Destruct_Log::$log_cout['exec'] . '","fromlog":"exec"}}' . "\n";
+//
+//                (new RedisCacheConfig())
+//                    ->__invoke()
+//                    ->lPush('log_list', $data);
+//                //e:redis
+//                $data = sprintf('{ "update":  { "_index": "thelostlog_thread", "_type": "data","_id":"%s"}}' . "\n", (string)$_SERVER['logid']) . '{"doc":{"redis":"' . Destruct_Log::$log_cout['redis'] . '","fromlog":"redis"}}' . "\n";
+//
+//                (new RedisCacheConfig())
+//                    ->__invoke()
+//                    ->lPush('log_list', $data);
+//            }
 
             $this->重置日志次数统计();
             $this->sethaveloged(true);

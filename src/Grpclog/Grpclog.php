@@ -4,7 +4,6 @@ namespace xltxlm\logger\Grpclog;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
-use xltxlm\snownum\Config\RedisCacheConfig;
 use xltxlm\statistics\Config\Kkreview\GrpclogModel;
 
 /**
@@ -51,11 +50,7 @@ class Grpclog extends Grpclog\Grpclog_implements
                 ->setrequest_data($this->getrequest_data())
                 ->seterror($this->geterror());
 
-            $data = sprintf('{ "index":  { "_index": "grpclog", "_type": "data","_id":"%s"}}' . "\n", $id) . $GrpclogModel->__toString() . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
+            error_log($GrpclogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
 
             Destruct_Log::$log_cout['grpc']++;
             //错误日志+1

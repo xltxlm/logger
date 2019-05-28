@@ -8,9 +8,6 @@
 
 namespace xltxlm\logger\Log;
 
-use xltxlm\snownum\Config\RedisCacheConfig;
-use xltxlm\statistics\Config\Kkreview\BusinesslogModel;
-
 /**
  * 记录业务日志
  * Class BusinessLog
@@ -163,47 +160,6 @@ class BusinessLog extends BasicLog
 
     public function __invoke()
     {
-        //判断是否真正需要写日志
-        if (!DefineLog::$writelog) {
-            return;
-        }
-
-        parent::__invoke();
-
-        $id = $this->getLogid() . $this->getDockername() . $this->getUniqid() . $this->getLogi();
-        $BusinesslogModel = (new BusinesslogModel());
-
-        $BusinesslogModel
-            ->setId($id)
-            ->setLogi($this->getLogi())
-            ->setProject_name($this->getProjectname())
-            ->setTablename($this->getTablename())
-            ->setMark($this->getMark())
-            ->setBusiness_id($this->getBusinessId())
-            ->setKey_id_1($this->getKeyId1())
-            ->setKey_id_2($this->getKeyId2())
-            ->setFrom_event($this->getFromEvent())
-            ->setHook($this->getHook())
-            ->setMessagetype($this->getType())
-            ->setCallClass($this->getCallClass())
-            ->setUniqid($this->getUniqid())
-            ->setEventid($this->getEventid())
-            ->setDockername($this->getDockername())
-            ->setHost_ip($this->getHOSTIP())
-            ->setUsername($this->getUsername())
-            ->setUsernameip($this->getRemoteaddr())
-            ->setUpdate_time(date('Y-m-d H:i:s'))
-            ->setAdd_time(date('Y-m-d H:i:s'))
-            ->setTns($this->getTns())
-            ->setTrace($this->getTrace());
-
-        $data = sprintf('{ "index":  { "_index": "businesslog", "_type": "data","_id":"%s"}}' . "\n", $id) . $BusinesslogModel->__toString() . "\n";
-        try {
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
-        } catch (\Exception $e) {
-            \xltxlm\helper\Util::d([$e->getMessage(),$e->getFile(),$e->getLine()]);
-        }
+        return;
     }
 }

@@ -4,7 +4,6 @@ namespace xltxlm\logger\Resource_define;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
-use xltxlm\snownum\Config\RedisCacheConfig;
 use xltxlm\statistics\Config\Kkreview\Thelostlog_resource_defineModel;
 
 /**
@@ -50,12 +49,7 @@ trait Resource_define_TraitClass
                 ->setUser((string)$this->getuser())
                 ->setPort((string)$this->getport());
 
-
-            $data = sprintf('{ "index":  { "_index": "thelostlog_resource_define", "_type": "data","_id":"%s"}}' . "\n", $id) . $thelostlogModel->__toString() . "\n";
-
-            (new RedisCacheConfig())
-                ->__invoke()
-                ->lPush('log_list', $data);
+            error_log($thelostlogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
             Destruct_Log::$log_cout['resource_connect']++;
 
             $this->sethaveloged(true);

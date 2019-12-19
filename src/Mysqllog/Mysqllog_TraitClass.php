@@ -4,7 +4,7 @@ namespace xltxlm\logger\Mysqllog;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
-use xltxlm\statistics\Config\Kkreview\MysqllogModel;
+use xltxlm\statistics\Config\Kkreview\LogmysqlModel;
 
 /** @var \xltxlm\logger\Mysqllog\Mysqllog_TraitClass $this */
 
@@ -29,7 +29,7 @@ class Mysqllog_TraitClass extends Mysqllog_TraitClass\Mysqllog_TraitClass_implem
             $uniqid = DefineLog::getUniqid_static();
             $id = $logid . $_SERVER['dockername'] . $uniqid . '@' . $log_num;
 
-            $MysqllogModel = (new MysqllogModel());
+            $MysqllogModel = (new LogmysqlModel());
             $MysqllogModel
                 ->setId($id)
                 ->setProject_name((string)$_SERVER['projectname'])
@@ -55,7 +55,7 @@ class Mysqllog_TraitClass extends Mysqllog_TraitClass\Mysqllog_TraitClass_implem
                 ->setMessagetype((string)$this->getmessagetype())
                 ->setException($this->getexception())
                 ->setTrace((string)(new \Exception())->getTraceAsString());
-            error_log($MysqllogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
+            error_log($MysqllogModel->__toString() . "\n", 3, "/opt/logs/".date('Ymd/') . ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log");
             //SQL执行次数+1
             Destruct_Log::$log_cout['mysqllog']++;
             //错误日志+1

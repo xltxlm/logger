@@ -4,7 +4,7 @@ namespace xltxlm\logger\Grpclog;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
-use xltxlm\statistics\Config\Kkreview\GrpclogModel;
+use xltxlm\statistics\Config\Kkreview\LoggrpcModel;
 
 /**
  * 记录远程请求的日志;
@@ -28,7 +28,7 @@ class Grpclog extends Grpclog\Grpclog_implements
             $id = $logid . $_SERVER['dockername'] . $uniqid . '@' . $log_num;
 
             $time = date('Y-m-d H:i:s');
-            $GrpclogModel = (new GrpclogModel)
+            $GrpclogModel = (new LoggrpcModel)
                 ->setId($id)
                 ->setPosixid($posixid)
                 ->setPosix_log_num($log_num)
@@ -50,7 +50,8 @@ class Grpclog extends Grpclog\Grpclog_implements
                 ->setrequest_data($this->getrequest_data())
                 ->seterror($this->geterror());
 
-            error_log($GrpclogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
+            $logfile = "/opt/logs/" . date('Ymd/') . ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log";
+            error_log($GrpclogModel->__toString() . "\n", 3, $logfile);
 
             Destruct_Log::$log_cout['grpc']++;
             //错误日志+1
@@ -59,7 +60,7 @@ class Grpclog extends Grpclog\Grpclog_implements
             }
             $this->sethaveloged(true);
         } catch (\Exception $e) {
-            \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
+            p([$e->getMessage(), $e->getFile(), $e->getLine()]);
         }
     }
 

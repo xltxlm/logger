@@ -42,7 +42,7 @@ class Thelostlog_thread extends Thelostlog_thread\Thelostlog_thread_implements
                 ->setError_count(Destruct_Log::$log_cout['error']);
 
             //1:写入进程的总日志.
-            error_log($Thelostlog_threadModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
+            error_log($Thelostlog_threadModel->__toString() . "\n", 3, "/opt/logs/" .date('Ymd/'). ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log");
 
 //            //2:开始逐条计算各个类型日志的条数
 //            if ($_SERVER['logid']) {

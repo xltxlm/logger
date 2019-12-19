@@ -15,7 +15,7 @@ use xltxlm\logger\Operation\EnumResource;
 use xltxlm\orm\Config\PDO;
 use xltxlm\orm\Config\PdoConfig;
 use xltxlm\orm\PdoInterface;
-use xltxlm\statistics\Config\Kkreview\MysqllogModel;
+use xltxlm\statistics\Config\Kkreview\LogmysqlModel;
 
 class PdoConnectLog extends BasicLog
 {
@@ -278,9 +278,9 @@ class PdoConnectLog extends BasicLog
         }
         parent::__invoke();
         $buffer = get_object_vars($this);
-        /** @var MysqllogModel $mysqllogModel */
+        /** @var LogmysqlModel $mysqllogModel */
         $id = $buffer['logid'] . $buffer['dockername'] . $buffer['uniqid'] . $buffer['logi'];
-        $mysqllogModel = (new MysqllogModel());
+        $mysqllogModel = (new LogmysqlModel());
         $mysqllogModel
             ->setId($id)
             ->setHost_ip($buffer['HOST_IP'])
@@ -316,7 +316,7 @@ class PdoConnectLog extends BasicLog
             ->setEventid($this->getEventid())
             ->setMemory($buffer['memory']);
 
-        error_log($mysqllogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
+        error_log($mysqllogModel->__toString() . "\n", 3, "/opt/logs/".date('.Ymd/') . ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log");
     }
 
 }

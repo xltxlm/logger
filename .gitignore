@@ -4,3 +4,4 @@ composer.lock
 project
 temp
 gitpush.sh
+go

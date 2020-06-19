@@ -10,10 +10,8 @@
   "description":"日志记录类，记录的格式化json日志，供日后ELK分析",
   "require": {
     "php": "~7.1",
-    "xltxlm/helper": "@dev",
     "psr/log": "*",
-    "xltxlm/guzzlehttp": "@dev",
-    "xltxlm/resources": "@dev"
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
@@ -21,6 +19,17 @@
         "src/",
         "./"
       ]
-    }
+    },
+    "files": [
+      "src/dk_get_dt_id.php"
+    ]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "scripts": {
+    "test": [
+      "vendor/bin/phpunit ./test -v --colors=auto --enforce-time-limit"
+    ]
   }
 }

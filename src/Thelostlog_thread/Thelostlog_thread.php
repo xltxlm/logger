@@ -4,6 +4,7 @@ namespace xltxlm\logger\Thelostlog_thread;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
+use xltxlm\logger\LoggerTrack;
 use xltxlm\statistics\Config\Kkreview\Thelostlog_threadModel;
 
 /**
@@ -25,24 +26,38 @@ class Thelostlog_thread extends Thelostlog_thread\Thelostlog_thread_implements
             $log_num = Thelostlog_thread::$posix_log_num[$posixid];
             $id = $_SERVER['logid'];
 
+            $use_time = sprintf('%.4f', microtime(true) - $this->timestamp_start);
             $Thelostlog_threadModel = (new Thelostlog_threadModel())
                 ->setId($id)
                 ->setProject_name((string)$_SERVER['projectname'])
                 ->setDockname((string)$_SERVER['dockername'])
                 ->setLogid((string)$_SERVER['logid'])
                 ->setAtcion_entrance($this->getAtcion_entrance())
-                ->setExecution_time(sprintf('%.4f', microtime(true) - $this->timestamp_start))
+                ->setExecution_time($use_time)
                 ->setPosixid($posixid)
                 ->setPosix_log_num($log_num)
                 ->setUsername((string)$_COOKIE['username'])
                 ->setAdd_time(date('Y-m-d H:i:s'));
 
             $Thelostlog_threadModel
+                ->setResource_connect(Destruct_Log::$log_cout['resource_connect'])
+                ->setMysqllog(Destruct_Log::$log_cout['mysqllog'])
+                ->setRedis(Destruct_Log::$log_cout['redis'])
+                ->setLogic(Destruct_Log::$log_cout['logic'])
+                ->setGrpc(Destruct_Log::$log_cout['grpc'])
+                ->setExec(Destruct_Log::$log_cout['exec'])
                 ->setError_message($this->geterror_message())
                 ->setError_count(Destruct_Log::$log_cout['error']);
 
             //1:写入进程的总日志.
-            error_log($Thelostlog_threadModel->__toString() . "\n", 3, "/opt/logs/" .date('Ymd/'). ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log");
+            $class_shortName = (new \ReflectionClass($this))->getShortName();
+            error_log($Thelostlog_threadModel->__toString() . "\n", 3, "/opt/logs/" . date('Ymd/') . $class_shortName . date('.YmdHi') . ".log");
+
+            (new LoggerTrack())
+                ->setresource_type($class_shortName)
+                ->setuse_times($use_time)
+                ->setContext($Thelostlog_threadModel)
+                ->__invoke();
 
 //            //2:开始逐条计算各个类型日志的条数
 //            if ($_SERVER['logid']) {

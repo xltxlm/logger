@@ -10,6 +10,7 @@ namespace xltxlm\logger\Operation\Connect;
 
 use xltxlm\logger\Log\BasicLog;
 use xltxlm\logger\Log\DefineLog;
+use xltxlm\logger\LoggerTrack;
 use xltxlm\logger\Operation\Action\PdoRunLog;
 use xltxlm\logger\Operation\EnumResource;
 use xltxlm\orm\Config\PDO;
@@ -311,12 +312,20 @@ class PdoConnectLog extends BasicLog
         //如果是错误日志,记录全部的调试信息,否则简化
         $mysqllogModel
             ->setException($buffer['Exception'])
-            ->setTrace(join("\n", $this->getTrace()));
+            ->setTrace(join("", $this->getTrace()));
         $mysqllogModel
             ->setEventid($this->getEventid())
             ->setMemory($buffer['memory']);
 
-        error_log($mysqllogModel->__toString() . "\n", 3, "/opt/logs/".date('.Ymd/') . ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log");
+        $class_shortName = (new \ReflectionClass($this))->getShortName();
+        $filename = "/opt/logs/" . date('Ymd/') . $class_shortName . date('.YmdHi') . ".log";
+        error_log($mysqllogModel->__toString() . "\n", 3, $filename);
+
+        (new LoggerTrack())
+            ->setresource_type($class_shortName)
+            ->setuse_times($buffer['runTime'])
+            ->setContext($mysqllogModel)
+            ->__invoke();
     }
 
 }

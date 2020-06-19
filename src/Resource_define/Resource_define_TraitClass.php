@@ -4,6 +4,7 @@ namespace xltxlm\logger\Resource_define;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
+use xltxlm\logger\LoggerTrack;
 use xltxlm\statistics\Config\Kkreview\Thelostlog_resource_defineModel;
 
 /**
@@ -30,13 +31,14 @@ trait Resource_define_TraitClass
             $id = $logid . $_SERVER['dockername'] . $uniqid . '@' . $log_num;
 
             $thelostlogModel = (new Thelostlog_resource_defineModel());
+            $use_time = sprintf('%.4f', microtime(true) - $this->timestamp_start);
             $thelostlogModel
                 ->setId($id)
                 ->setProject_name((string)$_SERVER['projectname'])
                 ->setDockname((string)$_SERVER['dockername'])
                 ->setLogid((string)$_SERVER['logid'])
                 ->setResources_type($this->getresources_type())
-                ->setExecution_time(sprintf('%.4f', microtime(true) - $this->timestamp_start))
+                ->setExecution_time($use_time)
                 ->setAtcion_entrance($this->getAtcion_entrance())
                 ->setPosixid($posixid)
                 ->setPosix_log_num($log_num)
@@ -49,12 +51,21 @@ trait Resource_define_TraitClass
                 ->setUser((string)$this->getuser())
                 ->setPort((string)$this->getport());
 
-            error_log($thelostlogModel->__toString() . "\n", 3, "/opt/logs/" . ((new \ReflectionClass($this))->getShortName()) . date('.Ymd') . ".log");
+            $class_shortName = (new \ReflectionClass($this))->getShortName();
+            error_log($thelostlogModel->__toString() . "\n", 3, "/opt/logs/" . $class_shortName . date('.Ymd') . ".log");
+
+            (new LoggerTrack())
+                ->setresource_type($class_shortName)
+                ->setuse_times($use_time)
+                ->setContext($thelostlogModel)
+                ->__invoke();
+
+
             Destruct_Log::$log_cout['resource_connect']++;
 
             $this->sethaveloged(true);
         } catch (\Exception $e) {
-            \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
+            p([$e->getMessage(), $e->getFile(), $e->getLine(),$e->getTraceAsString()]);
         }
     }
 

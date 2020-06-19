@@ -4,6 +4,7 @@ namespace xltxlm\logger\Grpclog;
 
 use xltxlm\logger\Log\DefineLog;
 use xltxlm\logger\Log\Destruct_Log;
+use xltxlm\logger\LoggerTrack;
 use xltxlm\statistics\Config\Kkreview\LoggrpcModel;
 
 /**
@@ -28,6 +29,7 @@ class Grpclog extends Grpclog\Grpclog_implements
             $id = $logid . $_SERVER['dockername'] . $uniqid . '@' . $log_num;
 
             $time = date('Y-m-d H:i:s');
+            $use_time = sprintf('%.4f', microtime(true) - $this->timestamp_start);
             $GrpclogModel = (new LoggrpcModel)
                 ->setId($id)
                 ->setPosixid($posixid)
@@ -37,7 +39,7 @@ class Grpclog extends Grpclog\Grpclog_implements
                 ->setrundocker((string)$_SERVER['dockername'])
                 ->setusername((string)$_COOKIE['username'])
                 ->setusernameip((string)$_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'])
-                ->setuse_time(sprintf('%.4f', microtime(true) - $this->timestamp_start))
+                ->setuse_time($use_time)
                 ->setAdd_time($time);
 
             $GrpclogModel
@@ -50,8 +52,14 @@ class Grpclog extends Grpclog\Grpclog_implements
                 ->setrequest_data($this->getrequest_data())
                 ->seterror($this->geterror());
 
-            $logfile = "/opt/logs/" . date('Ymd/') . ((new \ReflectionClass($this))->getShortName()) . date('.YmdHi') . ".log";
+            $class_shortName = (new \ReflectionClass($this))->getShortName();
+            $logfile = "/opt/logs/" . date('Ymd/') . $class_shortName . date('.YmdHi') . ".log";
             error_log($GrpclogModel->__toString() . "\n", 3, $logfile);
+            (new LoggerTrack())
+                ->setresource_type($class_shortName)
+                ->setuse_times($use_time)
+                ->setContext($GrpclogModel)
+                ->__invoke();
 
             Destruct_Log::$log_cout['grpc']++;
             //错误日志+1

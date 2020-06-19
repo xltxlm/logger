@@ -64,7 +64,7 @@ trait TraitClass
                 Destruct_Log::$log_cout['error']++;
             }
             $this->sethaveloged(true);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
         }
     }

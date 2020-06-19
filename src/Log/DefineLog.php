@@ -19,6 +19,7 @@ use xltxlm\orm\Config\PdoConfig;
 /**
  * 日志的基础结构，子类提供__selfConstruct构造函数
  * Class DefineLog
+ *
  * @package xltxlm\logger\Log
  */
 abstract class DefineLog
@@ -119,7 +120,7 @@ abstract class DefineLog
      */
     public function getProjectname(): string
     {
-        return $this->projectname?:$_SERVER['project'];
+        return $this->projectname ?: $_SERVER['project'];
     }
 
     /**
@@ -128,7 +129,7 @@ abstract class DefineLog
      */
     public function setProjectname(string $projectname): DefineLog
     {
-        $this->projectname = strval($projectname?:$_SERVER['project']);
+        $this->projectname = strval($projectname ?: $_SERVER['project']);
         return $this;
     }
 
@@ -161,7 +162,7 @@ abstract class DefineLog
      */
     public function getHOSTIP(): string
     {
-        return $this->HOST_IP?:'';
+        return $this->HOST_IP ?: '';
     }
 
     /**
@@ -214,7 +215,6 @@ abstract class DefineLog
             $this->setMessage($message);
         }
         $this->add_time = date('Y-m-d H:i:s');
-        include_once __DIR__ . '/dk_get_dt_id.php';
         $this->logClassName = static::class;
         $this->callClass = LoadClass::$runClass;
         if (!$this->callClass) {
@@ -241,8 +241,13 @@ abstract class DefineLog
 
         ob_start();
         debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $trace = explode('#', ob_get_clean());
-        $this->setTrace($trace);
+        $traces = explode('#', ob_get_clean());
+        foreach ($traces as $index => $trace) {
+            if (strpos($trace, 'vendor') !== false) {
+                unset($traces[$index]);
+            }
+        }
+        $this->setTrace($traces);
 
         $this->logid = $_SERVER['logid'] ?: \dk_get_next_id();
         $this->timestamp_start = microtime(true);

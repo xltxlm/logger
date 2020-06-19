@@ -73,15 +73,15 @@ class LoggerTrack extends LoggerTrack\LoggerTrack_implements
             //在进程的第一次运行时候，把运行环境的所有配置，作为一次日志记录起来（）不受任何条件的约束。
             if ($log_num == 1) {
                 call_user_func($getcallback_function, [
-                    'dockername' => $_SERVER['dockername'],
-                    'ip' => (string)$_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'],
+                    'dockername' => @$_SERVER['dockername'],
+                    'ip' => (string)@$_SERVER['HTTP_X_REAL_IP'] ?? @$_SERVER['REMOTE_ADDR'],
                     'PHP_SAPI' => PHP_SAPI,
-                    'refer' => $_SERVER['HTTP_REFERER'],
+                    'refer' => @$_SERVER['HTTP_REFERER'],
                     'get' => $_GET,
                     'post' => $_POST,
                     'file' => $_FILES,
                     'cookie' => $_COOKIE,
-                    'args' => $_SERVER['argv']
+                    'args' => @$_SERVER['argv']
                 ]);
             }
             //本次日志

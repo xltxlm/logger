@@ -65,7 +65,6 @@ trait TraitClass
             }
             $this->sethaveloged(true);
         } catch (\Throwable $e) {
-            \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
         }
     }
 

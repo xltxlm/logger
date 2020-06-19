@@ -9,7 +9,6 @@
 namespace xltxlm\logger\Log;
 
 use Psr\Log\LogLevel;
-use xltxlm\helper\Basic\Str;
 use xltxlm\helper\Ctroller\LoadClass;
 use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\helper\Hclass\ObjectToJson;
@@ -231,7 +230,7 @@ abstract class DefineLog
         if (PHP_SAPI == 'cli') {
             $this->setFromEvent('任务');
         } else {
-            if ($_GET['c'] && (new Str())->setValue($_GET['c'])->Strpos('Grpc/')) {
+            if ($_GET['c'] && strpos($_GET['c'], 'Grpc/') !== false) {
                 $this->setFromEvent('Grpc');
             } else {
                 $this->setFromEvent('网页');

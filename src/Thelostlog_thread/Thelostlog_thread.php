@@ -102,7 +102,6 @@ class Thelostlog_thread extends Thelostlog_thread\Thelostlog_thread_implements
             $this->重置日志次数统计();
             $this->sethaveloged(true);
         } catch (\Exception $e) {
-            \xltxlm\helper\Util::d([$e->getMessage(), $e->getFile(), $e->getLine()]);
         }
     }
 

@@ -23,7 +23,7 @@ jobs:
         tools: composer
 
 
-    - name: 取出git代码 - Check out code into the Go module directory
+    - name: 取出git代码 - Check out code
       uses: actions/checkout@v2
 
     - name: Install dependencies

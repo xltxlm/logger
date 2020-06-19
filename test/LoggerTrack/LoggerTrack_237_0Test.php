@@ -2,6 +2,7 @@
 
 namespace xltxlm\logger\test\LoggerTrack;
 
+use abc\xx\a;
 use PHPUnit\Framework\TestCase;
 use xltxlm\logger\flow;
 use xltxlm\logger\LoggerTrack;
@@ -37,9 +38,9 @@ class LoggerTrack_237_0Test extends TestCase
     {
         $return = false;
         $context = ['name' => 'ok'];
-        flow::setcallback_function(function ($arr) use (&$return, $input, $context) {
+        flow::setcallback_function(function (array $arr) use (&$return, $input, $context) {
             //证明有给回调了。且值也都传递进来了。
-            if ($arr['context'] == $context && $arr['resource_type'] == $input) {
+            if (@$arr['context'] == $context && @$arr['resource_type'] == $input) {
                 $return = true;
             }
         });

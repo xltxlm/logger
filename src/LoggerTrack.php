@@ -13,7 +13,11 @@ class LoggerTrack extends LoggerTrack\LoggerTrack_implements
 {
     public function __construct()
     {
-        $this->setlogid($_SERVER['logid'] ?: \dk_get_next_id());
+        if (isset($_SERVER['logid'])) {
+            $this->setlogid($_SERVER['logid']);
+        } else {
+            $this->setlogid(\dk_get_next_id());
+        }
         $this->settimestamp_start(microtime(true));
         $this->setadd_time(date('Y-m-d H:i:s'));
 

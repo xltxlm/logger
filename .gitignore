@@ -5,3 +5,4 @@ project
 temp
 gitpush.sh
 go
+*.7z

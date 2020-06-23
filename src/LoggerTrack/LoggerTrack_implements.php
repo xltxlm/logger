@@ -174,8 +174,8 @@ abstract class LoggerTrack_implements
 
 
 
-/* @var void  更加细节的资源相关请求内容。调用方自身的细节 */
-        protected $context;
+/* @var array  更加细节的资源相关请求内容。调用方自身的细节 */
+    protected $context = [];
 
 
 
@@ -183,9 +183,9 @@ abstract class LoggerTrack_implements
 
     /**
     * 更加细节的资源相关请求内容。调用方自身的细节;
-    * @return void;
+    * @return array;
     */
-            public function getcontext()        {
+            public function getcontext():array        {
                 return $this->context;
         }
 
@@ -196,14 +196,10 @@ abstract class LoggerTrack_implements
 
 
 /**
-* @param  $context;
+* @param array $context;
 * @return $this
 */
-    public function setcontext( $context )
-    {
-    $this->context = $context;
-    return $this;
-    }
+    abstract public function setcontext(array $context  = []);
 
 
 

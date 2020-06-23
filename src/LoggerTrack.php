@@ -4,6 +4,8 @@
 namespace xltxlm\logger;
 
 
+use xltxlm\logger\LoggerTrack\LoggerTrack_implements;
+
 /**
  * 跟踪资源的耗时
  * Class LoggerTrack
@@ -30,6 +32,15 @@ class LoggerTrack extends LoggerTrack\LoggerTrack_implements
         $this->setdebug_backtrace($debug_backtrace);
 
     }
+
+
+    public function setcontext(array $context = [])
+    {
+        //采用追加的形式
+        $this->context += $context;
+        return $this;
+    }
+
 
     /**
      * 记录起来：打印到错误日志文件里面

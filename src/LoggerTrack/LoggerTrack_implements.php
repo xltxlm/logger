@@ -303,7 +303,7 @@ abstract class LoggerTrack_implements
 
 
 /* @var array  执行的流程，已经排除了vendor目录 */
-    protected $debug_backtrace = [];
+    protected $debug = [];
 
 
 
@@ -313,8 +313,8 @@ abstract class LoggerTrack_implements
     * 执行的流程，已经排除了vendor目录;
     * @return array;
     */
-            public function getdebug_backtrace():array        {
-                return $this->debug_backtrace;
+            public function getdebug():array        {
+                return $this->debug;
         }
 
     
@@ -324,12 +324,12 @@ abstract class LoggerTrack_implements
 
 
 /**
-* @param array $debug_backtrace;
+* @param array $debug;
 * @return $this
 */
-    public function setdebug_backtrace(array $debug_backtrace  = [])
+    public function setdebug(array $debug  = [])
     {
-    $this->debug_backtrace = $debug_backtrace;
+    $this->debug = $debug;
     return $this;
     }
 

@@ -324,7 +324,7 @@ class PdoConnectLog extends BasicLog
         (new LoggerTrack())
             ->setresource_type($class_shortName)
             ->setuse_times($buffer['runTime'])
-            ->setContext($mysqllogModel)
+            ->setContext($mysqllogModel->__toArray())
             ->__invoke();
     }
 

@@ -58,7 +58,7 @@ class Grpclog extends Grpclog\Grpclog_implements
             (new LoggerTrack())
                 ->setresource_type($class_shortName)
                 ->setuse_times($use_time)
-                ->setContext($GrpclogModel)
+                ->setContext($GrpclogModel->__toArray())
                 ->__invoke();
 
             Destruct_Log::$log_cout['grpc']++;

@@ -56,7 +56,7 @@ class Thelostlog_thread extends Thelostlog_thread\Thelostlog_thread_implements
             (new LoggerTrack())
                 ->setresource_type($class_shortName)
                 ->setuse_times($use_time)
-                ->setContext($Thelostlog_threadModel)
+                ->setContext($Thelostlog_threadModel->__toArray())
                 ->__invoke();
 
 //            //2:开始逐条计算各个类型日志的条数

@@ -57,7 +57,7 @@ trait Resource_define_TraitClass
             (new LoggerTrack())
                 ->setresource_type($class_shortName)
                 ->setuse_times($use_time)
-                ->setContext($thelostlogModel)
+                ->setContext($thelostlogModel->__toArray())
                 ->__invoke();
 
 

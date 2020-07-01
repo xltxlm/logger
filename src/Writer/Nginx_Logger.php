@@ -11,9 +11,7 @@ class Nginx_Logger extends Nginx_Logger\Nginx_Logger_implements
 
     public function __invoke()
     {
-        $debug_backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $str_arr = $this->getcontext() + $debug_backtrace;
-        $Content_string = json_encode($str_arr, JSON_UNESCAPED_UNICODE);
+        $Content_string = json_encode($this->getcontext(), JSON_UNESCAPED_UNICODE);
         if ($this->getloggerhost()) {
             $parse_url = parse_url($this->getloggerhost());
             $fp = fsockopen($parse_url["host"], $parse_url['port'], $errno, $errstr, 0.09);
@@ -21,18 +19,33 @@ class Nginx_Logger extends Nginx_Logger\Nginx_Logger_implements
                 // 转换到非阻塞模式
                 stream_set_blocking($fp, 0);
 
-                $header = "POST {$this->getpath()}  HTTP/1.0\r\n";
+                $header = "POST {$parse_url['path']}  HTTP/1.0\r\n";
                 $header .= "Referer: {$this->getentrance()}\r\n";
                 $header .= "User-Agent: {$_SERVER['dockername']}\r\n";
                 $header .= "Content-Length: " . strlen($Content_string) . "\r\n";
                 $header .= "Connection: Close\r\n\r\n";
                 fwrite($fp, $header);
                 fwrite($fp, $Content_string);
+
+                //如果包含了错误，那么还要再发送一次
+                if (isset($this->getcontext()['exception'])) {
+                    $header = "POST /exception  HTTP/1.0\r\n";
+                    $header .= "Referer: {$this->getentrance()}\r\n";
+                    $header .= "User-Agent: {$_SERVER['dockername']}\r\n";
+                    $header .= "Content-Length: " . strlen($Content_string) . "\r\n";
+                    $header .= "Connection: Close\r\n\r\n";
+                    fwrite($fp, $header);
+                    fwrite($fp, $Content_string);
+                }
                 fclose($fp);
                 return;
             }
         }
+        //上面写入失败，还是保存到文件里面
         error_log($Content_string . "\n", 3, "/opt/logs/logger.log");
+        if (isset($this->getcontext()['exception'])) {
+            error_log($Content_string . "\n", 3, "/opt/logs/exception.log");
+        }
     }
 
 }

@@ -29,7 +29,7 @@ class LoggerTrack extends LoggerTrack\LoggerTrack_implements
                 unset($debug_backtrace[$k]);
             }
         }
-        $this->setdebug_backtrace($debug_backtrace);
+        $this->setdebug($debug_backtrace);
 
     }
 
@@ -85,6 +85,7 @@ class LoggerTrack extends LoggerTrack\LoggerTrack_implements
             if ($log_num == 1) {
                 call_user_func($getcallback_function, [
                     'dockername' => @$_SERVER['dockername'],
+                    'use_times' => 0.0,
                     'ip' => (string)@$_SERVER['HTTP_X_REAL_IP'] ?? @$_SERVER['REMOTE_ADDR'],
                     'PHP_SAPI' => PHP_SAPI,
                     'refer' => @$_SERVER['HTTP_REFERER'],

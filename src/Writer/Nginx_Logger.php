@@ -20,8 +20,9 @@ class Nginx_Logger extends Nginx_Logger\Nginx_Logger_implements
                 stream_set_blocking($fp, 0);
 
                 $header = "POST /  HTTP/1.0\r\n";
-                $header .= "Referer: {$this->getentrance()}\r\n";
-                $header .= "User-Agent: {$_SERVER['dockername']}\r\n";
+                if (isset($_SERVER['dockername'])) {
+                    $header .= "User-Agent: {$_SERVER['dockername']}\r\n";
+                }
                 $header .= "Content-Length: " . strlen($Content_string) . "\r\n";
                 $header .= "Connection: Close\r\n\r\n";
                 fwrite($fp, $header);

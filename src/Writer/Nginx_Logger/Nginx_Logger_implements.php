@@ -9,39 +9,6 @@ abstract class Nginx_Logger_implements
 {
 
 
-/* @var string  当前执行类的名字，用来识别是哪个页面发出的日志 */
-    protected $entrance = '';
-
-
-
-
-
-    /**
-    * 当前执行类的名字，用来识别是哪个页面发出的日志;
-    * @return string;
-    */
-            public function getentrance():string        {
-                return $this->entrance;
-        }
-
-    
-    
-
-
-
-
-/**
-* @param string $entrance;
-* @return $this
-*/
-    public function setentrance(string $entrance  = "")
-    {
-    $this->entrance = $entrance;
-    return $this;
-    }
-
-
-
 /* @var array  要记录的消息日志，数组格式 */
     protected $context = [];
 

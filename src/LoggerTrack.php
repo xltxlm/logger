@@ -86,14 +86,17 @@ class LoggerTrack extends LoggerTrack\LoggerTrack_implements
                 call_user_func($getcallback_function, [
                     'dockername' => @$_SERVER['dockername'],
                     'use_times' => 0.0,
+                    "logid" => $this->getlogid(),
                     'ip' => (string)@$_SERVER['HTTP_X_REAL_IP'] ?? @$_SERVER['REMOTE_ADDR'],
                     'PHP_SAPI' => PHP_SAPI,
                     'refer' => @$_SERVER['HTTP_REFERER'],
-                    'get' => $_GET,
-                    'post' => $_POST,
-                    'file' => $_FILES,
-                    'cookie' => $_COOKIE,
-                    'args' => @$_SERVER['argv']
+                    'debug' => [
+                        'get' => $_GET,
+                        'post' => $_POST,
+                        'file' => $_FILES,
+                        'cookie' => $_COOKIE,
+                        'args' => @$_SERVER['argv']
+                    ]
                 ]);
             }
             //本次日志

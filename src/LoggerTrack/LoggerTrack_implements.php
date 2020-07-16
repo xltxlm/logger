@@ -67,7 +67,7 @@ abstract class LoggerTrack_implements
 * @param string $add_time;
 * @return $this
 */
-    public function setadd_time(string $add_time  = "")
+    protected function setadd_time(string $add_time  = "")
     {
     $this->add_time = $add_time;
     return $this;
@@ -261,7 +261,7 @@ abstract class LoggerTrack_implements
 * @param string $logid;
 * @return $this
 */
-    public function setlogid(string $logid  = "")
+    protected function setlogid(string $logid  = "")
     {
     $this->logid = $logid;
     return $this;
@@ -294,7 +294,7 @@ abstract class LoggerTrack_implements
 * @param int $log_num;
 * @return $this
 */
-    public function setlog_num(int $log_num  = 0)
+    protected function setlog_num(int $log_num  = 0)
     {
     $this->log_num = $log_num;
     return $this;
@@ -327,7 +327,7 @@ abstract class LoggerTrack_implements
 * @param array $debug;
 * @return $this
 */
-    public function setdebug(array $debug  = [])
+    protected function setdebug(array $debug  = [])
     {
     $this->debug = $debug;
     return $this;

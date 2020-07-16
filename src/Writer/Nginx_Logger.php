@@ -19,24 +19,13 @@ class Nginx_Logger extends Nginx_Logger\Nginx_Logger_implements
                 // 转换到非阻塞模式
                 stream_set_blocking($fp, 0);
 
-                $header = "POST {$parse_url['path']}  HTTP/1.0\r\n";
+                $header = "POST /  HTTP/1.0\r\n";
                 $header .= "Referer: {$this->getentrance()}\r\n";
                 $header .= "User-Agent: {$_SERVER['dockername']}\r\n";
                 $header .= "Content-Length: " . strlen($Content_string) . "\r\n";
                 $header .= "Connection: Close\r\n\r\n";
                 fwrite($fp, $header);
                 fwrite($fp, $Content_string);
-
-                //如果包含了错误，那么还要再发送一次
-                if (isset($this->getcontext()['exception'])) {
-                    $header = "POST /exception  HTTP/1.0\r\n";
-                    $header .= "Referer: {$this->getentrance()}\r\n";
-                    $header .= "User-Agent: {$_SERVER['dockername']}\r\n";
-                    $header .= "Content-Length: " . strlen($Content_string) . "\r\n";
-                    $header .= "Connection: Close\r\n\r\n";
-                    fwrite($fp, $header);
-                    fwrite($fp, $Content_string);
-                }
                 fclose($fp);
                 return;
             }

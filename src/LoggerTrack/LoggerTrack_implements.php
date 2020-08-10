@@ -350,4 +350,9 @@ abstract public function __destruct();
 *  @return ;
 */
 abstract public function __construct();
+/**
+*  日志id，证明多条日志是相同进程的标志;
+*  @return string;
+*/
+abstract public static function id():string;
 }

@@ -13,13 +13,22 @@ use xltxlm\logger\LoggerTrack\LoggerTrack_implements;
  */
 class LoggerTrack extends LoggerTrack\LoggerTrack_implements
 {
+    public static function id(): string
+    {
+        static $id = "";
+        if (!$id) {
+            if (isset($_SERVER['logid'])) {
+                $id = $_SERVER['logid'];
+            } else {
+                $id = \dk_get_next_id();
+            }
+        }
+        return $id;
+    }
+
     public function __construct()
     {
-        if (isset($_SERVER['logid'])) {
-            $this->setlogid($_SERVER['logid']);
-        } else {
-            $this->setlogid(\dk_get_next_id());
-        }
+        $this->setlogid(self::id());
         $this->settimestamp_start(microtime(true));
         $this->setadd_time(date('Y-m-d H:i:s'));
 
